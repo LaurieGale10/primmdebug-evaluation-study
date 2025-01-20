@@ -23,3 +23,6 @@ class ProgramLog:
     @property
     def io_events(self) -> list[IOEvent]:
         return self._io_events
+    
+    def __repr__(self):
+        return f'ProgramLog(\'{self._snapshot}\', {self._timestamp}, {self._compiled}, {self._io_events})'

@@ -17,3 +17,6 @@ class IOEvent:
     @property
     def time(self):
         return self._time
+    
+    def __repr__(self):
+        return f'IOEvent(\'{self._text}\', {self._type}, {self._time})'

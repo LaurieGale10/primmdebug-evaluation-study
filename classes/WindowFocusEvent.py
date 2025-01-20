@@ -12,3 +12,6 @@ class WindowFocusEvent:
     @property
     def time(self):
         return self._time
+    
+    def __repr__(self):
+        return f'WindowFocusEvent({self._focus}, {self._time})'

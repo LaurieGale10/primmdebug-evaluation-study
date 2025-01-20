@@ -15,3 +15,6 @@ class StudentId:
     @property
     def date_first_accessed(self):
         return self._date_first_accessed
+    
+    def __repr__(self):
+        return f'StudentId(\'{self._id}\', \'{self._school}\', {self._date_first_accessed})'

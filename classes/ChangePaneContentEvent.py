@@ -10,3 +10,6 @@ class ChangePaneContentEvent:
     @property
     def time(self):
         return self._time
+    
+    def __repr__(self):
+        return f'ChangePaneContentEvent(\'{self._new_content}\', {self._time})'

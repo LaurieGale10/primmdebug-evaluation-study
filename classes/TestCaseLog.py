@@ -14,3 +14,6 @@ class TestCaseLog:
     @property
     def pane_content_changes(self) -> list[ChangePaneContentEvent]:
         return self._pane_content_changes
+    
+    def __repr__(self):
+        return f'TestCaseLog({self._expansion_changes}, {self._pane_content_changes})'

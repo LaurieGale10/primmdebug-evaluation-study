@@ -23,3 +23,6 @@ class ExerciseLog:
     @property
     def start_time(self):
         return self._start_time
+    
+    def __repr__(self):
+        return f'ExerciseLog(\'{self._student_id}\', \'{self._exercise_name}\', {self._start_time}, {self._stage_logs})'

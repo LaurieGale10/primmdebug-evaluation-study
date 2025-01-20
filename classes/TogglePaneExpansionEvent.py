@@ -12,3 +12,6 @@ class TogglePaneExpansionEvent:
     @property
     def time(self):
         return self._time
+    
+    def __repr__(self):
+        return f'TogglePaneExpansionEvent({self._new_pane_view}, {self._time})'

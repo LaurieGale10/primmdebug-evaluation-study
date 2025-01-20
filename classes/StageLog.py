@@ -68,3 +68,8 @@ class StageLog:
     @property
     def hint_pane_logs(self) -> str:
         return self._hint_pane_logs
+    
+    def __repr__(self):
+        if self._stage_name == "exit":
+            return f'StageLog(\'{self._id}\', {self._time}, \'{self._stage_name}\')'
+        return f'StageLog(\'{self._id}\', {self._time}, \'{self._overall_stage_number}\', \'{self.stage_name}\', \'{self._stage_iteration}\', {self._program_logs}, \'{self._response}\', {self._correct}, {self._focus_events}, {self._test_case_logs}, {self._hint_pane_logs})'
