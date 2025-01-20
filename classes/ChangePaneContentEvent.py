@@ -1,4 +1,4 @@
-class ChangeHelpPaneContentEvent:
+class ChangePaneContentEvent:
     def __init__(self, new_content: str, time):
         self._new_content = new_content
         self._time = time

@@ -5,12 +5,16 @@ from classes.WindowFocusEvent import WindowFocusEvent
 from enums import DebuggingStage
 
 class StageLog:
-    def __init__(self, id: str, time, overall_stage_number: int, stage_iteration: int, stage_name: DebuggingStage, program_logs: list[ProgramLog] = None, response: str = None, correct: bool = None, focus_events: list[WindowFocusEvent] = None, test_case_logs: TestCaseLog = None, hint_pane_logs: HintPaneLog = None):
+    def __init__(self, id: str, time, stage_string: str, program_logs: list[ProgramLog] = None, response: str = None, correct: bool = None, focus_events: list[WindowFocusEvent] = None, test_case_logs: TestCaseLog = None, hint_pane_logs: HintPaneLog = None):
         self._id = id
-        self._time = time
-        self._overall_stage_number = overall_stage_number
-        self._stage_iteration = stage_iteration
-        self._stage_name = stage_name
+        self._time = time,
+        if stage_string == "exit":
+            self._stage_name = "exit"
+        else:
+            self._overall_stage_number = stage_string.split("_")[0]
+            self._stage_iteration = stage_string.split("_")[2]
+            self._stage_name = stage_string.split("_")[1] #Could convert to an enum here?
+        #TODO: Perform null checks here
         self._program_logs = program_logs
         self._response = response
         self._correct = correct

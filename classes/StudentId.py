@@ -1,5 +1,5 @@
 class StudentId:
-    def __init__(self, id: str, school: str, date_first_accessed):
+    def __init__(self, id: str, school: str, date_first_accessed = None):
         self._id = id
         self._school = school
         self._date_first_accessed = date_first_accessed

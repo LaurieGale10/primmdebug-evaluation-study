@@ -1,7 +1,6 @@
 from enums import PaneView
 
-
-class ToggleHelpPaneExpansionEvent:
+class TogglePaneExpansionEvent:
     def __init__(self, new_pane_view: PaneView, time):
         self._new_pane_view = new_pane_view
         self._time = time

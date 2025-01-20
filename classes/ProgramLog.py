@@ -2,7 +2,7 @@ from classes.IOEvent import IOEvent
 
 
 class ProgramLog:
-    def __init__(self, snapshot: str, timestamp, compiled: bool, io_events: list[IOEvent] = None):
+    def __init__(self, snapshot: str, timestamp, compiled: bool, io_events: list[IOEvent]):
         self._snapshot = snapshot
         self._timestamp = timestamp
         self._compiled = compiled
