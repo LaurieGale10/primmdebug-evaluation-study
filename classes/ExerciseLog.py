@@ -27,5 +27,14 @@ class ExerciseLog:
     def start_time(self) -> str:
         return self._start_time
     
+    @staticmethod
+    def parse_exercise_log(raw_exercise_logs: dict, stage_logs: list[StageLog]) -> 'ExerciseLog':
+        return ExerciseLog(
+            student_id = raw_exercise_logs["studentId"],
+            exercise_name = raw_exercise_logs["exerciseId"],
+            stage_logs = stage_logs,
+            start_time = raw_exercise_logs["time"]
+        )
+    
     def __repr__(self):
         return f'ExerciseLog(\'{self._student_id}\', \'{self._exercise_name}\', {self._start_time}, {self._stage_logs})'

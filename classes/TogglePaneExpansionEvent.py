@@ -17,5 +17,12 @@ class TogglePaneExpansionEvent:
     def time(self) -> str:
         return self._time
     
+    @staticmethod
+    def parse_pane_expansion_log(raw_logs: dict) -> 'TogglePaneExpansionEvent':
+        return TogglePaneExpansionEvent(
+            new_pane_view = PaneView[raw_logs["newPaneView"]],
+            time = raw_logs["time"]
+        )
+        
     def __repr__(self):
         return f'TogglePaneExpansionEvent({self._new_pane_view}, {self._time})'

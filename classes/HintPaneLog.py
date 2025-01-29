@@ -15,5 +15,20 @@ class HintPaneLog:
     def pane_content_changes(self) -> list[ChangePaneContentEvent]:
         return self._pane_content_changes
     
+    @staticmethod
+    def parse_hint_pane_log(raw_logs: dict) -> 'HintPaneLog':
+        if (raw_logs["expansionChanges"]):
+            parsed_expansion_changes = []
+            for raw_expansion_change in raw_logs["expansionChanges"]:
+                parsed_expansion_changes.append(TogglePaneExpansionEvent.parse_pane_expansion_log(raw_expansion_change))
+        if (raw_logs["paneContentChanges"]):
+            parsed_pane_content_changes = []
+            for raw_pane_content_change in raw_logs["paneContentChanges"]:
+                parsed_pane_content_changes.append(ChangePaneContentEvent.parse_pane_content_change_log(raw_pane_content_change))
+        return HintPaneLog(
+            expansion_changes = parsed_expansion_changes if parsed_expansion_changes is not None else None,
+            pane_content_changes = parsed_pane_content_changes if parsed_pane_content_changes is not None else None
+        )
+
     def __repr__(self):
         return f"HintPaneLog({self.expansion_changes}, {self.pane_content_changes})"

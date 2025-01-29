@@ -21,5 +21,13 @@ class IOEvent:
     def time(self) -> str:
         return self._time
     
+    @staticmethod
+    def parse_io_event(raw_log: dict) -> 'IOEvent':
+        return IOEvent(
+            text = raw_log["text"],
+            type = IOType[raw_log["type"]], #This might not work and might have to do a switch statement,
+            time = raw_log["time"]
+        )
+    
     def __repr__(self):
         return f'IOEvent(\'{self._text}\', {self._type}, {self._time})'

@@ -16,5 +16,12 @@ class WindowFocusEvent:
     def time(self) -> str:
         return self._time
     
+    @staticmethod
+    def parse_window_focus_event(raw_logs: dict) -> 'WindowFocusEvent':
+        return WindowFocusEvent(
+            focus = FocusType[raw_logs["focus"]],
+            time = raw_logs["time"]
+        )
+    
     def __repr__(self):
         return f'WindowFocusEvent({self._focus}, {self._time})'
