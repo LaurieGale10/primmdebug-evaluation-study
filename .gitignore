@@ -163,3 +163,5 @@ cython_debug/
 
 #Ignores in personal files
 firebase_service_account_key.json
+#Data folder currently ignored to prevent pushing intermediary, unchecked log data to repo
+data/
