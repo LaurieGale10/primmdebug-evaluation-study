@@ -1,3 +1,6 @@
+from google.cloud.firestore_v1.base_document import DocumentSnapshot
+from google.cloud.firestore_v1.stream_generator import StreamGenerator
+
 from classes.ChangePaneContentEvent import ChangePaneContentEvent
 from classes.ExerciseLog import ExerciseLog
 from classes.HintPaneLog import HintPaneLog
@@ -10,79 +13,6 @@ from classes.TogglePaneExpansionEvent import TogglePaneExpansionEvent
 from classes.WindowFocusEvent import WindowFocusEvent
 from enums import IOType, FocusType, PaneView
 
-def parse_exercise_log(raw_exercise_logs: dict, stage_logs: list[StageLog]) -> ExerciseLog:
-    return ExerciseLog(
-        student_id = raw_exercise_logs["studentId"],
-        exercise_name = raw_exercise_logs["exerciseId"],
-        stage_logs = stage_logs,
-        start_time = raw_exercise_logs["time"]
-    )
-
-"""Functions for parsing stage logs"""
-
-def parse_io_event(raw_log: dict) -> IOEvent:
-    return IOEvent(
-        text = raw_log["text"],
-        type = IOType[raw_log["type"]], #This might not work and might have to do a switch statement,
-        time = raw_log["time"]
-    )
-
-def parse_program_log(raw_log: dict) -> ProgramLog:
-    parsed_io_events = []
-    for raw_io_event in raw_log["io"]:
-        parsed_io_events.append(parse_io_event(raw_io_event))
-    return ProgramLog(
-        snapshot = raw_log["snapshot"],
-        timestamp = raw_log["timestamp"],
-        compiled = raw_log["compiled"],
-        io_events = parsed_io_events
-    )
-
-def parse_window_focus_event(raw_logs: dict) -> WindowFocusEvent:
-    return WindowFocusEvent(
-        focus = FocusType[raw_logs["focus"]],
-        time = raw_logs["time"]
-    )
-
-def parse_pane_expansion_log(raw_logs: dict) -> TogglePaneExpansionEvent:
-    return TogglePaneExpansionEvent(
-        new_pane_view = PaneView[raw_logs["newPaneView"]],
-        time = raw_logs["time"]
-    )
-
-def parse_pane_content_change_log(raw_logs: dict) -> ChangePaneContentEvent:
-    return ChangePaneContentEvent(
-        new_content = raw_logs["newContent"],
-        time = raw_logs["time"]
-    )
-
-def parse_test_case_log(raw_logs: dict) -> TestCaseLog:
-    if (raw_logs["expansionChanges"]):
-        parsed_expansion_changes = []
-        for raw_expansion_change in raw_logs["expansionChanges"]:
-            parsed_expansion_changes.append(parse_pane_expansion_log(raw_expansion_change))
-    if (raw_logs["paneContentChanges"]):
-        parsed_pane_content_changes = []
-        for raw_pane_content_change in raw_logs["paneContentChanges"]:
-            parsed_pane_content_changes.append(parse_pane_content_change_log(raw_pane_content_change))
-    return TestCaseLog(
-        expansion_changes = parsed_expansion_changes if parsed_expansion_changes is not None else None,
-        pane_content_changes = parsed_pane_content_changes if parsed_pane_content_changes is not None else None
-    )
-
-def parse_hint_pane_log(raw_logs: dict) -> HintPaneLog:
-    if (raw_logs["expansionChanges"]):
-        parsed_expansion_changes = []
-        for raw_expansion_change in raw_logs["expansionChanges"]:
-            parsed_expansion_changes.append(parse_pane_expansion_log(raw_expansion_change))
-    if (raw_logs["paneContentChanges"]):
-        parsed_pane_content_changes = []
-        for raw_pane_content_change in raw_logs["paneContentChanges"]:
-            parsed_pane_content_changes.append(parse_pane_content_change_log(raw_pane_content_change))
-    return HintPaneLog(
-        expansion_changes = parsed_expansion_changes if parsed_expansion_changes is not None else None,
-        pane_content_changes = parsed_pane_content_changes if parsed_pane_content_changes is not None else None
-    )
 
 def parse_stage_log(raw_logs: dict) -> StageLog:
     #Check whether it's an exit log or not
@@ -93,21 +23,21 @@ def parse_stage_log(raw_logs: dict) -> StageLog:
     if "programLogs" in raw_logs:
         parsed_program_logs = []
         for raw_program_log in raw_logs["programLogs"]:
-            parsed_program_logs.append(parse_program_log(raw_program_log))
+            parsed_program_logs.append(ProgramLog.parse_program_log(raw_program_log))
     
     parsed_window_focus_events = None
     if "focusEvents" in raw_logs:
         parsed_window_focus_events = []
         for raw_window_focus_event in raw_logs["focusEvents"]:
-            parsed_window_focus_events.append(parse_window_focus_event(raw_window_focus_event))
+            parsed_window_focus_events.append(WindowFocusEvent.parse_window_focus_event(raw_window_focus_event))
     
     parsed_test_case_log = None
     if "testCaseLog" in raw_logs:
-        parsed_test_case_log = parse_test_case_log(raw_logs["testCaseLog"])
+        parsed_test_case_log = TestCaseLog.parse_test_case_log(raw_logs["testCaseLog"])
     
     parsed_hint_pane_log = None
     if "hintPaneLogs" in raw_logs:
-        parsed_hint_pane_log = parse_hint_pane_log(raw_logs["hintPaneLogs"])
+        parsed_hint_pane_log = HintPaneLog.parse_hint_pane_log(raw_logs["hintPaneLogs"])
     return StageLog(
         id = raw_logs["id"],
         time = raw_logs["time"],
@@ -126,3 +56,29 @@ def parse_student_id(raw_logs: dict) -> StudentId:
         school = raw_logs["school"],
         date_first_accessed = raw_logs["dateFirstAccessed"] if "dateFirstAccessed" in raw_logs else None
     )
+
+def parse_exercise_logs(stage_logs: list[StageLog], raw_logs: StreamGenerator[DocumentSnapshot]) -> list[ExerciseLog]:
+    parsed_exercise_logs = []
+    for doc in raw_logs:
+        doc_dict = doc.to_dict()
+        doc_dict["id"] = doc.id
+        stage_log_ids = doc_dict["stageLogIds"]
+        stage_logs_for_exercise = [stage_log for stage_log in stage_logs if stage_log.id in stage_log_ids]
+        parsed_exercise_logs.append(ExerciseLog.parse_exercise_log(doc_dict, stage_logs_for_exercise))
+    return parsed_exercise_logs
+
+def parse_stage_logs(raw_logs: StreamGenerator[DocumentSnapshot]) -> list[StageLog]:
+    parsed_stage_logs = []
+    for doc in raw_logs:
+        doc_dict = doc.to_dict()
+        doc_dict["id"] = doc.id
+        parsed_stage_logs.append(parse_stage_log(doc_dict))
+    return parsed_stage_logs
+
+def parse_student_ids(raw_logs: StreamGenerator[DocumentSnapshot]) -> list[StudentId]:
+    parsed_student_ids = []
+    for doc in raw_logs:
+        doc_dict = doc.to_dict()
+        doc_dict["id"] = doc.id
+        parsed_student_ids.append(parse_student_id(doc_dict))
+    return parsed_student_ids
