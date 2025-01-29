@@ -1,10 +1,13 @@
+from google.api_core.datetime_helpers import DatetimeWithNanoseconds
+
+from classes.TimestampParser import TimestampParser
 from enums import IOType
 
 class IOEvent:
-    def __init__(self, text: str, type: IOType, time):
-        self._text = text
-        self._type = type
-        self._time = time
+    def __init__(self, text: str, type: IOType, time: DatetimeWithNanoseconds):
+        self._text: str = text
+        self._type: IOType = type
+        self._time: str = int(time.timestamp())
     
     @property
     def text(self) -> str:
@@ -15,7 +18,7 @@ class IOEvent:
         return self._type
 
     @property
-    def time(self):
+    def time(self) -> str:
         return self._time
     
     def __repr__(self):

@@ -1,33 +1,36 @@
+from google.api_core.datetime_helpers import DatetimeWithNanoseconds
+
 from classes import HintPaneLog
 from classes.ProgramLog import ProgramLog
 from classes.TestCaseLog import TestCaseLog
 from classes.WindowFocusEvent import WindowFocusEvent
+from classes.TimestampParser import TimestampParser
 from enums import DebuggingStage
 
 class StageLog:
-    def __init__(self, id: str, time, stage_string: str, program_logs: list[ProgramLog] = None, response: str = None, correct: bool = None, focus_events: list[WindowFocusEvent] = None, test_case_logs: TestCaseLog = None, hint_pane_logs: HintPaneLog = None):
-        self._id = id
-        self._time = time,
+    def __init__(self, id: str, time: DatetimeWithNanoseconds, stage_string: str, program_logs: list[ProgramLog] = None, response: str = None, correct: bool = None, focus_events: list[WindowFocusEvent] = None, test_case_logs: TestCaseLog = None, hint_pane_logs: HintPaneLog = None):
+        self._id : str= id
+        self._time: int = int(time.timestamp()),
         if stage_string == "exit":
-            self._stage_name = "exit"
+            self._stage_name: str = "exit"
         else:
-            self._overall_stage_number = stage_string.split("_")[0]
-            self._stage_iteration = stage_string.split("_")[2]
-            self._stage_name = stage_string.split("_")[1] #Could convert to an enum here?
+            self._overall_stage_number: int = stage_string.split("_")[0]
+            self._stage_iteration: int = stage_string.split("_")[2]
+            self._stage_name: str = stage_string.split("_")[1] #Could convert to an enum here?
         #TODO: Perform null checks here
-        self._program_logs = program_logs
-        self._response = response
-        self._correct = correct
-        self._focus_events = focus_events
-        self._test_case_logs = test_case_logs
-        self._hint_pane_logs = hint_pane_logs
+        self._program_logs: list[ProgramLog] = program_logs
+        self._response: str = response
+        self._correct: bool = correct
+        self._focus_events: list[WindowFocusEvent] = focus_events
+        self._test_case_logs: TestCaseLog = test_case_logs
+        self._hint_pane_logs: HintPaneLog = hint_pane_logs
 
     @property
-    def id(self):
+    def id(self) -> str:
         return self._id
     
     @property
-    def time(self):
+    def time(self) -> str:
         return self._time
     
     def reconstruct_stage_string(self) -> str:

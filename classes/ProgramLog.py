@@ -1,19 +1,22 @@
+from google.api_core.datetime_helpers import DatetimeWithNanoseconds
+
 from classes.IOEvent import IOEvent
+from classes.TimestampParser import TimestampParser
 
 
 class ProgramLog:
-    def __init__(self, snapshot: str, timestamp, compiled: bool, io_events: list[IOEvent]):
-        self._snapshot = snapshot
-        self._timestamp = timestamp
-        self._compiled = compiled
-        self._io_events = io_events
+    def __init__(self, snapshot: str, timestamp: DatetimeWithNanoseconds, compiled: bool, io_events: list[IOEvent]):
+        self._snapshot: str = snapshot
+        self._timestamp: str = int(timestamp.timestamp())
+        self._compiled: bool = compiled
+        self._io_events: list[IOEvent] = io_events
     
     @property
     def snapshot(self) -> str:
         return self._snapshot
 
     @property
-    def timestamp(self):
+    def timestamp(self) -> str:
         return self._timestamp
 
     @property

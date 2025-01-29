@@ -1,12 +1,15 @@
+from google.api_core.datetime_helpers import DatetimeWithNanoseconds
+
 from classes.StageLog import StageLog
+from classes.TimestampParser import TimestampParser
 
 
 class ExerciseLog:
-    def __init__(self, student_id: str, exercise_name: str, stage_logs: list[StageLog], start_time):
-        self._student_id = student_id
-        self._exercise_name = exercise_name
-        self._stage_logs = stage_logs
-        self._start_time = start_time
+    def __init__(self, student_id: str, exercise_name: str, stage_logs: list[StageLog], start_time: DatetimeWithNanoseconds):
+        self._student_id: str = student_id
+        self._exercise_name: str = exercise_name
+        self._stage_logs: list[StageLog] = stage_logs
+        self._start_time: str = int(start_time.timestamp())
     
     @property
     def student_id(self) -> str:
@@ -21,7 +24,7 @@ class ExerciseLog:
         return self._stage_logs
 
     @property
-    def start_time(self):
+    def start_time(self) -> str:
         return self._start_time
     
     def __repr__(self):

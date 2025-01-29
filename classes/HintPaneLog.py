@@ -4,8 +4,8 @@ from classes.TogglePaneExpansionEvent import TogglePaneExpansionEvent
 
 class HintPaneLog:
     def __init__(self, expansion_changes: list[TogglePaneExpansionEvent] = None, pane_content_changes: list[ChangePaneContentEvent] = None):
-        self._expansion_changes = expansion_changes
-        self._pane_content_changes = pane_content_changes
+        self._expansion_changes: list[TogglePaneExpansionEvent] = expansion_changes
+        self._pane_content_changes: list[ChangePaneContentEvent] = pane_content_changes
     
     @property
     def expansion_changes(self) -> list[TogglePaneExpansionEvent]:
