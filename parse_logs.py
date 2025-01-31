@@ -1,14 +1,7 @@
 from classes.ChangePaneContentEvent import ChangePaneContentEvent
 from classes.ExerciseLog import ExerciseLog
-from classes.HintPaneLog import HintPaneLog
-from classes.IOEvent import IOEvent
-from classes.ProgramLog import ProgramLog
 from classes.StageLog import StageLog
 from classes.StudentId import StudentId
-from classes.TestCaseLog import TestCaseLog
-from classes.TogglePaneExpansionEvent import TogglePaneExpansionEvent
-from classes.WindowFocusEvent import WindowFocusEvent
-from enums import IOType, FocusType, PaneView
 
 
 def parse_exercise_logs(stage_logs: list[StageLog], raw_logs: list[dict]) -> list[ExerciseLog]:
