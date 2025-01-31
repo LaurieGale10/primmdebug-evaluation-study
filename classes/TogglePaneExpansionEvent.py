@@ -1,13 +1,13 @@
-from google.api_core.datetime_helpers import DatetimeWithNanoseconds
+import datetime
 
 from classes.TimestampParser import TimestampParser
 from enums import PaneView
 
 
 class TogglePaneExpansionEvent:
-    def __init__(self, new_pane_view: PaneView, time: DatetimeWithNanoseconds):
+    def __init__(self, new_pane_view: PaneView, time: str):
         self._new_pane_view: PaneView = new_pane_view
-        self._time: str = int(time.timestamp())
+        self._time: datetime = TimestampParser.parse_timestamp_str(time)
     
     @property
     def new_pane_view(self) -> PaneView:

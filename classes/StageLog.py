@@ -1,4 +1,4 @@
-from google.api_core.datetime_helpers import DatetimeWithNanoseconds
+import datetime
 
 from classes import HintPaneLog
 from classes.ProgramLog import ProgramLog
@@ -8,9 +8,9 @@ from classes.TimestampParser import TimestampParser
 from enums import DebuggingStage
 
 class StageLog:
-    def __init__(self, id: str, time: DatetimeWithNanoseconds, stage_string: str, program_logs: list[ProgramLog] = None, response: str = None, correct: bool = None, focus_events: list[WindowFocusEvent] = None, test_case_logs: TestCaseLog = None, hint_pane_logs: HintPaneLog = None):
+    def __init__(self, id: str, time: str, stage_string: str, program_logs: list[ProgramLog] = None, response: str = None, correct: bool = None, focus_events: list[WindowFocusEvent] = None, test_case_logs: TestCaseLog = None, hint_pane_logs: HintPaneLog = None):
         self._id : str= id
-        self._time: int = int(time.timestamp()),
+        self._time: datetime = TimestampParser.parse_timestamp_str(time),
         if stage_string == "exit":
             self._stage_name: str = "exit"
         else:

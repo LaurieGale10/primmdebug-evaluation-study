@@ -1,12 +1,12 @@
-from google.api_core.datetime_helpers import DatetimeWithNanoseconds
+import datetime
 
 from classes.TimestampParser import TimestampParser
 from enums import FocusType
 
 class WindowFocusEvent:
-    def __init__(self, focus: FocusType, time: DatetimeWithNanoseconds):
+    def __init__(self, focus: FocusType, time: str):
         self._focus: FocusType = focus
-        self._time: str = int(time.timestamp())
+        self._time: datetime = TimestampParser.parse_timestamp_str(time)
 
     @property
     def focus(self) -> FocusType:

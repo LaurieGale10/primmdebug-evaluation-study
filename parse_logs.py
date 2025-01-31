@@ -1,6 +1,3 @@
-from google.cloud.firestore_v1.base_document import DocumentSnapshot
-from google.cloud.firestore_v1.stream_generator import StreamGenerator
-
 from classes.ChangePaneContentEvent import ChangePaneContentEvent
 from classes.ExerciseLog import ExerciseLog
 from classes.HintPaneLog import HintPaneLog
@@ -57,28 +54,22 @@ def parse_student_id(raw_logs: dict) -> StudentId:
         date_first_accessed = raw_logs["dateFirstAccessed"] if "dateFirstAccessed" in raw_logs else None
     )
 
-def parse_exercise_logs(stage_logs: list[StageLog], raw_logs: StreamGenerator[DocumentSnapshot]) -> list[ExerciseLog]:
+def parse_exercise_logs(stage_logs: list[StageLog], raw_logs: list[dict]) -> list[ExerciseLog]:
     parsed_exercise_logs = []
-    for doc in raw_logs:
-        doc_dict = doc.to_dict()
-        doc_dict["id"] = doc.id
-        stage_log_ids = doc_dict["stageLogIds"]
+    for log in raw_logs:
+        stage_log_ids = log["stageLogIds"]
         stage_logs_for_exercise = [stage_log for stage_log in stage_logs if stage_log.id in stage_log_ids]
-        parsed_exercise_logs.append(ExerciseLog.parse_exercise_log(doc_dict, stage_logs_for_exercise))
+        parsed_exercise_logs.append(ExerciseLog.parse_exercise_log(log, stage_logs_for_exercise))
     return parsed_exercise_logs
 
-def parse_stage_logs(raw_logs: StreamGenerator[DocumentSnapshot]) -> list[StageLog]:
+def parse_stage_logs(raw_logs: list[dict]) -> list[StageLog]:
     parsed_stage_logs = []
-    for doc in raw_logs:
-        doc_dict = doc.to_dict()
-        doc_dict["id"] = doc.id
-        parsed_stage_logs.append(parse_stage_log(doc_dict))
+    for log in raw_logs:
+        parsed_stage_logs.append(parse_stage_log(log))
     return parsed_stage_logs
 
-def parse_student_ids(raw_logs: StreamGenerator[DocumentSnapshot]) -> list[StudentId]:
+def parse_student_ids(raw_logs: list[dict]) -> list[StudentId]:
     parsed_student_ids = []
-    for doc in raw_logs:
-        doc_dict = doc.to_dict()
-        doc_dict["id"] = doc.id
-        parsed_student_ids.append(parse_student_id(doc_dict))
+    for log in raw_logs:
+        parsed_student_ids.append(parse_student_id(log))
     return parsed_student_ids

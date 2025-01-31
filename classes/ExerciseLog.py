@@ -1,15 +1,15 @@
-from google.api_core.datetime_helpers import DatetimeWithNanoseconds
+import datetime
 
 from classes.StageLog import StageLog
 from classes.TimestampParser import TimestampParser
 
 
 class ExerciseLog:
-    def __init__(self, student_id: str, exercise_name: str, stage_logs: list[StageLog], start_time: DatetimeWithNanoseconds):
+    def __init__(self, student_id: str, exercise_name: str, stage_logs: list[StageLog], start_time: str):
         self._student_id: str = student_id
         self._exercise_name: str = exercise_name
         self._stage_logs: list[StageLog] = stage_logs
-        self._start_time: str = int(start_time.timestamp())
+        self._start_time: datetime = TimestampParser.parse_timestamp_str(start_time)
     
     @property
     def student_id(self) -> str:

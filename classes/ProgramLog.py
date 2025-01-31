@@ -1,13 +1,13 @@
-from google.api_core.datetime_helpers import DatetimeWithNanoseconds
+import datetime
 
 from classes.IOEvent import IOEvent
 from classes.TimestampParser import TimestampParser
 
 
 class ProgramLog:
-    def __init__(self, snapshot: str, timestamp: DatetimeWithNanoseconds, compiled: bool, io_events: list[IOEvent]):
+    def __init__(self, snapshot: str, timestamp: str, compiled: bool, io_events: list[IOEvent]):
         self._snapshot: str = snapshot
-        self._timestamp: str = int(timestamp.timestamp())
+        self._timestamp: datetime = TimestampParser.parse_timestamp_str(timestamp)
         self._compiled: bool = compiled
         self._io_events: list[IOEvent] = io_events
     

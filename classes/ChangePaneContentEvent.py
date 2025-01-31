@@ -1,12 +1,12 @@
-from google.api_core.datetime_helpers import DatetimeWithNanoseconds
+import datetime
 
 from classes.TimestampParser import TimestampParser
 
 
 class ChangePaneContentEvent:
-    def __init__(self, new_content: str, time: DatetimeWithNanoseconds):
+    def __init__(self, new_content: str, time: str):
         self._new_content: str = new_content
-        self._time: str = int(time.timestamp())
+        self._time: datetime = TimestampParser.parse_timestamp_str(time)
 
     @property
     def new_content(self) -> str:

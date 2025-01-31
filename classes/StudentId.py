@@ -1,14 +1,14 @@
-from google.api_core.datetime_helpers import DatetimeWithNanoseconds
+import datetime
 
 from classes.TimestampParser import TimestampParser
 
 
 class StudentId:
-    def __init__(self, id: str, school: str, date_first_accessed: DatetimeWithNanoseconds = None):
+    def __init__(self, id: str, school: str, date_first_accessed: str = None):
         self._id: str = id
         self._school: str = school
         if date_first_accessed:
-            self._date_first_accessed: str = int(date_first_accessed.timestamp())
+            self._date_first_accessed: datetime = TimestampParser.parse_timestamp_str(date_first_accessed)
 
     @property
     def id(self) -> str:
