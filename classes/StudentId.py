@@ -22,5 +22,13 @@ class StudentId:
     def date_first_accessed(self) -> str:
         return self._date_first_accessed
     
+    @staticmethod
+    def parse_student_id(raw_logs: dict) -> 'StudentId':
+        return StudentId(
+            id = raw_logs["id"],
+            school = raw_logs["school"],
+            date_first_accessed = raw_logs["dateFirstAccessed"] if "dateFirstAccessed" in raw_logs else None
+        )
+    
     def __repr__(self):
         return f'StudentId(\'{self._id}\', \'{self._school}\', {self._date_first_accessed})'
