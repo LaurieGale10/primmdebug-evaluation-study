@@ -1,6 +1,6 @@
 import datetime
 
-from classes import HintPaneLog
+from classes.HintPaneLog import HintPaneLog
 from classes.ProgramLog import ProgramLog
 from classes.TestCaseLog import TestCaseLog
 from classes.WindowFocusEvent import WindowFocusEvent
