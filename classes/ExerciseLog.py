@@ -11,7 +11,6 @@ class ExerciseLog:
         self._exercise_name: str = exercise_name
         self._stage_logs: list[StageLog] = ExerciseLog.sort_stage_logs(stage_logs)
         self._start_time: datetime = TimestampParser.parse_timestamp_str(start_time)
-        #Set end time here?
     
     @property
     def student_id(self) -> str:

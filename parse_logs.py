@@ -1,6 +1,7 @@
 from classes.ExerciseLog import ExerciseLog
 from classes.StageLog import StageLog
 from classes.StudentId import StudentId
+from clean_logs import format_start_end_times
 
 
 def parse_exercise_logs(stage_logs: list[StageLog], raw_logs: list[dict]) -> list[ExerciseLog]:
@@ -9,7 +10,7 @@ def parse_exercise_logs(stage_logs: list[StageLog], raw_logs: list[dict]) -> lis
         stage_log_ids = log["stageLogIds"]
         stage_logs_for_exercise = [stage_log for stage_log in stage_logs if stage_log.id in stage_log_ids]
         if len(stage_logs_for_exercise) > 0:
-            parsed_exercise_logs.append(ExerciseLog.parse_exercise_log(log, stage_logs_for_exercise))
+            parsed_exercise_logs.append(format_start_end_times(ExerciseLog.parse_exercise_log(log, stage_logs_for_exercise))) #Ideally should be done to data directly but not essential
     return parsed_exercise_logs
 
 def parse_stage_logs(raw_logs: list[dict]) -> list[StageLog]:
