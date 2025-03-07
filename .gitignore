@@ -7,4 +7,3 @@ __pycache__/
 firebase_service_account_key.json
 #Data folder currently ignored to prevent pushing intermediary, unchecked log data to repo
 data/
-main.py
