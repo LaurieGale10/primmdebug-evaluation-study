@@ -1,4 +1,3 @@
-from classes.ChangePaneContentEvent import ChangePaneContentEvent
 from classes.ExerciseLog import ExerciseLog
 from classes.StageLog import StageLog
 from classes.StudentId import StudentId
@@ -9,7 +8,8 @@ def parse_exercise_logs(stage_logs: list[StageLog], raw_logs: list[dict]) -> lis
     for log in raw_logs:
         stage_log_ids = log["stageLogIds"]
         stage_logs_for_exercise = [stage_log for stage_log in stage_logs if stage_log.id in stage_log_ids]
-        parsed_exercise_logs.append(ExerciseLog.parse_exercise_log(log, stage_logs_for_exercise))
+        if len(stage_logs_for_exercise) > 0:
+            parsed_exercise_logs.append(ExerciseLog.parse_exercise_log(log, stage_logs_for_exercise))
     return parsed_exercise_logs
 
 def parse_stage_logs(raw_logs: list[dict]) -> list[StageLog]:

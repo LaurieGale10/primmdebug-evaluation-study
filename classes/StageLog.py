@@ -10,11 +10,12 @@ from enums import DebuggingStage
 class StageLog:
     def __init__(self, id: str, time: str, stage_string: str, program_logs: list[ProgramLog] = None, response: str = None, correct: bool = None, focus_events: list[WindowFocusEvent] = None, test_case_logs: TestCaseLog = None, hint_pane_logs: HintPaneLog = None):
         self._id : str= id
-        self._time: datetime = TimestampParser.parse_timestamp_str(time),
         if stage_string == "exit":
             self._stage_name: str = "exit"
+            self._time: datetime = TimestampParser.parse_timestamp_str(time)
         else:
-            self._overall_stage_number: int = stage_string.split("_")[0]
+            self._end_time: datetime = TimestampParser.parse_timestamp_str(time)
+            self._overall_stage_number: int = int(stage_string.split("_")[0])
             self._stage_iteration: int = stage_string.split("_")[2]
             self._stage_name: str = stage_string.split("_")[1] #Could convert to an enum here?
         #TODO: Perform null checks here
@@ -33,12 +34,16 @@ class StageLog:
     def time(self) -> str:
         return self._time
     
+    @property
+    def end_time(self) -> str:
+        return self._end_time
+    
     def reconstruct_stage_string(self) -> str:
         return f"{self._overall_stage_number}_{self._stage_name}_{self._stage_iteration}"
 
     @property
     def overall_stage_number(self) -> int:
-        return self._overall_stage_number
+        return self._overall_stage_number if self._overall_stage_number is not None else None
 
     @property
     def stage_iteration(self) -> int:
@@ -109,4 +114,4 @@ class StageLog:
     def __repr__(self):
         if self._stage_name == "exit":
             return f'StageLog(\'{self._id}\', {self._time}, \'{self._stage_name}\')'
-        return f'StageLog(\'{self._id}\', {self._time}, \'{self._overall_stage_number}\', \'{self.stage_name}\', \'{self._stage_iteration}\', {self._program_logs}, \'{self._response}\', {self._correct}, {self._focus_events}, {self._test_case_logs}, {self._hint_pane_logs})'
+        return f'StageLog(\'{self._id}\', {self._end_time}, \'{self._overall_stage_number}\', \'{self.stage_name}\', \'{self._stage_iteration}\', {self._program_logs}, \'{self._response}\', {self._correct}, {self._focus_events}, {self._test_case_logs}, {self._hint_pane_logs})'

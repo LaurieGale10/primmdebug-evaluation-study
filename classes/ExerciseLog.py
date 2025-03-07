@@ -1,4 +1,5 @@
 import datetime
+import sys
 
 from classes.StageLog import StageLog
 from classes.TimestampParser import TimestampParser
@@ -8,8 +9,9 @@ class ExerciseLog:
     def __init__(self, student_id: str, exercise_name: str, stage_logs: list[StageLog], start_time: str):
         self._student_id: str = student_id
         self._exercise_name: str = exercise_name
-        self._stage_logs: list[StageLog] = stage_logs
+        self._stage_logs: list[StageLog] = ExerciseLog.sort_stage_logs(stage_logs)
         self._start_time: datetime = TimestampParser.parse_timestamp_str(start_time)
+        #Set end time here?
     
     @property
     def student_id(self) -> str:
@@ -35,6 +37,18 @@ class ExerciseLog:
             stage_logs = stage_logs,
             start_time = raw_exercise_logs["time"]
         )
+    
+    @staticmethod
+    def sort_stage_logs(stage_logs: list[StageLog]) -> list[StageLog]:
+        exit_logs: list[StageLog] = []
+        non_exit_logs: list[StageLog] = []
+        for log in stage_logs:
+            if log.stage_name == "exit":
+                exit_logs.append(log)
+            else:
+                non_exit_logs.append(log)
+        non_exit_logs.sort(key=lambda log: log.overall_stage_number)
+        return non_exit_logs + exit_logs
     
     def __repr__(self):
         return f'ExerciseLog(\'{self._student_id}\', \'{self._exercise_name}\', {self._start_time}, {self._stage_logs})'
