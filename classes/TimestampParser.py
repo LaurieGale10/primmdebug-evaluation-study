@@ -14,4 +14,6 @@ class TimestampParser:
         try:
             return datetime.datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S.%f%z")
         except ValueError:
+            return datetime.datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S%z")
+        except ValueError:
             return None

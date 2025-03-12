@@ -35,7 +35,11 @@ class StageLog:
         return self._time
     
     @property
-    def end_time(self) -> str:
+    def start_time(self) -> datetime:
+        return self._start_time if self._start_time is not None else None
+    
+    @property
+    def end_time(self) -> datetime:
         return self._end_time
     
     def reconstruct_stage_string(self) -> str:

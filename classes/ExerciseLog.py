@@ -25,8 +25,12 @@ class ExerciseLog:
         return self._stage_logs
 
     @property
-    def start_time(self) -> str:
+    def start_time(self) -> datetime:
         return self._start_time
+    
+    @property
+    def end_time(self) -> datetime:
+        return self._end_time if self._end_time is not None else None
     
     @staticmethod
     def parse_exercise_log(raw_exercise_logs: dict, stage_logs: list[StageLog]) -> 'ExerciseLog':
