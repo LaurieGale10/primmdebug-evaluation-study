@@ -16,8 +16,8 @@ class StageLog:
         else:
             self._end_time: datetime = TimestampParser.parse_timestamp_str(time)
             self._overall_stage_number: int = int(stage_string.split("_")[0])
-            self._stage_iteration: int = stage_string.split("_")[2]
-            self._stage_name: str = stage_string.split("_")[1] #Could convert to an enum here?
+            self._stage_iteration: int = stage_string.split("_")[len(stage_string.split("_")) - 1]
+            self._stage_name: str = DebuggingStage("_".join(stage_string.split("_")[1:-1]))
         #TODO: Perform null checks here
         self._program_logs: list[ProgramLog] = program_logs
         self._response: str = response
