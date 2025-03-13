@@ -7,7 +7,7 @@ from parse_logs import *
 global db
 
 def get_firestore_client():
-    cred = credentials.Certificate("firebase_service_account_key.json")
+    cred = credentials.Certificate("loading_services/firebase_service_account_key.json")
     firebase_admin.initialize_app(cred)
     return firestore.client()
 

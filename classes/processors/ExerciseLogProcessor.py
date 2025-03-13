@@ -1,5 +1,6 @@
 from classes.ExerciseLog import ExerciseLog
 from classes.StageLog import StageLog
+from enums import DebuggingStage
 
 class ExerciseLogProcessor:
     
@@ -25,5 +26,14 @@ class ExerciseLogProcessor:
     - Test --> Find the error
     - Test --> Inspect the code"""
     
+    @staticmethod
     def get_time_on_exercise(exercise_log: ExerciseLog) -> float:
         return (exercise_log.end_time - exercise_log.start_time).total_seconds()
+    
+    @staticmethod
+    def get_written_responses(exercise_log: ExerciseLog) -> list[str]:
+        responses: list[str] = []
+        for stage_log in exercise_log.stage_logs:
+            if stage_log.stage_name in [DebuggingStage.predict, DebuggingStage.spot_defect, DebuggingStage.inspect_code, DebuggingStage.fix_error]:
+                responses.append(stage_log.response)
+        return responses
