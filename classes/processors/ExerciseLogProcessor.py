@@ -1,4 +1,5 @@
 import datetime
+from classes import ProgramLog
 from classes.ExerciseLog import ExerciseLog
 from classes.StageLog import StageLog
 from enums import DebuggingStage
@@ -30,7 +31,26 @@ class ExerciseLogProcessor:
     How to tell if a student definitely hasn't successfully completed an exercise
     - Test --> Find the error
     - Test --> Inspect the code"""
-    
+
+    @staticmethod
+    def get_last_program_log(exercise_log: ExerciseLog) -> ProgramLog:
+        """Declare stages that may contain program logs
+
+        Then iterate backwards through the stages of the exercise log to find first stage with program logs --> return
+        Else return none
+        """
+        stages_with_program_logs: list[DebuggingStage] = [DebuggingStage.run, DebuggingStage.inspect_code, DebuggingStage.fix_error, DebuggingStage.test]
+        for i in range(len(exercise_log.stage_logs) - 1, -1, -1):
+            stage_log = exercise_log.stage_logs[i]
+            if stage_log.stage_name in stages_with_program_logs and stage_log.program_logs is not None:
+                return stage_log.program_logs[-1]
+        return None
+
+    @staticmethod
+    def is_final_program_erroneous(exercise_log: ExerciseLog) -> bool:
+        last_program_log = ExerciseLogProcessor.get_last_program_log(exercise_log)
+        return last_program_log.compiled if last_program_log is not None else None
+
     @staticmethod
     def get_time_on_exercise(exercise_log: ExerciseLog) -> float:
         return (exercise_log.end_time - exercise_log.start_time).total_seconds()
