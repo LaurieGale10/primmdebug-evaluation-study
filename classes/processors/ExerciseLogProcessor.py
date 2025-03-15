@@ -1,14 +1,19 @@
+import datetime
 from classes.ExerciseLog import ExerciseLog
 from classes.StageLog import StageLog
 from enums import DebuggingStage
 
 class ExerciseLogProcessor:
+
+    @staticmethod
+    def get_stage_names(exercise_log: ExerciseLog) -> list[str]:
+        return [DebuggingStage(stage.stage_name).value for stage in exercise_log.stage_logs]
     
     @staticmethod
     def get_last_stage(exercise_log: ExerciseLog) -> StageLog:
         #Need to sort list by overall stage number and get name of last one. UPDATE: Should be done in StageLog now
         exercises_stages: list[StageLog] = exercise_log.stage_logs
-        exercises_stages = [stage for stage in exercises_stages if stage.stage_name != "exit"]
+        exercises_stages = [stage for stage in exercises_stages if stage.stage_name.value != "exit"]
         #Remove exit logs as they don't contain a overall_stage_number property
         if len(exercises_stages) > 0:
             exercises_stages.sort(key=lambda x : x.overall_stage_number)
@@ -31,9 +36,11 @@ class ExerciseLogProcessor:
         return (exercise_log.end_time - exercise_log.start_time).total_seconds()
     
     @staticmethod
-    def get_written_responses(exercise_log: ExerciseLog) -> list[str]:
-        responses: list[str] = []
+    def get_written_response_data(exercise_log: ExerciseLog) -> list[list[DebuggingStage, str, any, str]]:
+        responses: list[list[DebuggingStage, str, any, str]] = []
         for stage_log in exercise_log.stage_logs:
             if stage_log.stage_name in [DebuggingStage.predict, DebuggingStage.spot_defect, DebuggingStage.inspect_code, DebuggingStage.fix_error]:
-                responses.append(stage_log.response)
+                response_data: list[DebuggingStage, str, any, str] = [exercise_log.exercise_name, stage_log.stage_name, stage_log.end_time, stage_log.response]
+                responses.append(response_data)
+        responses.sort(key=lambda x: (x[0], x[2]))
         return responses
