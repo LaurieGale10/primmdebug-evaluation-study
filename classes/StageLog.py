@@ -11,13 +11,13 @@ class StageLog:
     def __init__(self, id: str, time: str, stage_string: str, program_logs: list[ProgramLog] = None, response: str = None, correct: bool = None, focus_events: list[WindowFocusEvent] = None, test_case_logs: TestCaseLog = None, hint_pane_logs: HintPaneLog = None):
         self._id : str= id
         if stage_string == "exit":
-            self._stage_name: str = "exit"
+            self._stage_name: DebuggingStage = DebuggingStage("exit")
             self._time: datetime = TimestampParser.parse_timestamp_str(time)
         else:
             self._end_time: datetime = TimestampParser.parse_timestamp_str(time)
             self._overall_stage_number: int = int(stage_string.split("_")[0])
             self._stage_iteration: int = stage_string.split("_")[len(stage_string.split("_")) - 1]
-            self._stage_name: str = DebuggingStage("_".join(stage_string.split("_")[1:-1]))
+            self._stage_name: DebuggingStage = DebuggingStage("_".join(stage_string.split("_")[1:-1]))
         #TODO: Perform null checks here
         self._program_logs: list[ProgramLog] = program_logs
         self._response: str = response
@@ -116,6 +116,6 @@ class StageLog:
     )
     
     def __repr__(self):
-        if self._stage_name == "exit":
+        if self._stage_name.value == "exit":
             return f'StageLog(\'{self._id}\', {self._time}, \'{self._stage_name}\')'
         return f'StageLog(\'{self._id}\', {self._end_time}, \'{self._overall_stage_number}\', \'{self.stage_name}\', \'{self._stage_iteration}\', {self._program_logs}, \'{self._response}\', {self._correct}, {self._focus_events}, {self._test_case_logs}, {self._hint_pane_logs})'

@@ -1,8 +1,8 @@
 from enum import Enum
 
 class IOType(Enum):
-    error = "error",
-    input = "input",
+    error = "error"
+    input = "input"
     output = "output"
 
 class DebuggingStage(Enum):
@@ -16,11 +16,12 @@ class DebuggingStage(Enum):
     completed_test = "completed_test"
     modify = "modify"
     make = "make"
+    exit = "exit"
 
 class PaneView(Enum):
-    open = "open",
+    open = "open"
     closed = "closed"
 
 class FocusType(Enum):
-    focus_in = "focus_in",
+    focus_in = "focus_in"
     focus_out = "focus_out"

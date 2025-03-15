@@ -2,7 +2,7 @@ import firebase_admin
 from firebase_admin import firestore
 from firebase_admin import credentials
 
-from parse_logs import *
+from loading_services.parse_logs import *
 
 global db
 

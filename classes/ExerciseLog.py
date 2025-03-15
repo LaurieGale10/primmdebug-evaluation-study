@@ -46,7 +46,7 @@ class ExerciseLog:
         exit_logs: list[StageLog] = []
         non_exit_logs: list[StageLog] = []
         for log in stage_logs:
-            if log.stage_name == "exit":
+            if log.stage_name.value == "exit":
                 exit_logs.append(log)
             else:
                 non_exit_logs.append(log)
