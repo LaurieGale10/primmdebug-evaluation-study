@@ -3,6 +3,7 @@ import sys
 
 from classes.StageLog import StageLog
 from classes.TimestampParser import TimestampParser
+from enums import DebuggingStage
 
 
 class ExerciseLog:
@@ -46,8 +47,9 @@ class ExerciseLog:
         exit_logs: list[StageLog] = []
         non_exit_logs: list[StageLog] = []
         for log in stage_logs:
-            if log.stage_name.value == "exit":
-                exit_logs.append(log)
+            if log.stage_name == DebuggingStage.exit:
+                if exit_logs == []:
+                    exit_logs.append(log)
             else:
                 non_exit_logs.append(log)
         non_exit_logs.sort(key=lambda log: log.overall_stage_number)
