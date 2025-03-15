@@ -1,7 +1,7 @@
 from classes.ExerciseLog import ExerciseLog
 from classes.StageLog import StageLog
 from classes.StudentId import StudentId
-from clean_logs import format_start_end_times
+from clean_logs import clean_focus_events, format_start_end_times
 from enums import DebuggingStage
 
 def parse_exercise_logs(stage_logs: list[StageLog], raw_logs: list[dict]) -> list[ExerciseLog]:
@@ -18,7 +18,7 @@ def parse_exercise_logs(stage_logs: list[StageLog], raw_logs: list[dict]) -> lis
 def parse_stage_logs(raw_logs: list[dict]) -> list[StageLog]:
     parsed_stage_logs = []
     for log in raw_logs:
-        parsed_stage_logs.append(StageLog.parse_stage_log(log))
+        parsed_stage_logs.append(clean_focus_events(StageLog.parse_stage_log(log)))
     return parsed_stage_logs
 
 def parse_student_ids(raw_logs: list[dict]) -> list[StudentId]:

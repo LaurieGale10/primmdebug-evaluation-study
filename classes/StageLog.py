@@ -73,6 +73,10 @@ class StageLog:
     def focus_events(self) -> list[WindowFocusEvent]:
         return self._focus_events
 
+    @focus_events.setter
+    def focus_events(self, focus_events: list[WindowFocusEvent]):
+        self._focus_events = focus_events
+
     @property
     def test_case_logs(self) -> TestCaseLog:
         return self._test_case_logs
