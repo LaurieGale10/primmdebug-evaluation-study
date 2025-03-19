@@ -2,6 +2,7 @@ import datetime
 from classes import ProgramLog
 from classes.ExerciseLog import ExerciseLog
 from classes.StageLog import StageLog
+from classes.processors.StageLogProcessor import StageLogProcessor
 from enums import DebuggingStage
 
 class ExerciseLogProcessor:
@@ -24,13 +25,6 @@ class ExerciseLogProcessor:
     @staticmethod
     def is_error_reportedly_solved() -> bool:
         pass
-    """How to tell if an exercise has definitely been successfully completed:
-    - Test harnesses
-    - If a students' transitions are test --> modify
-    
-    How to tell if a student definitely hasn't successfully completed an exercise
-    - Test --> Find the error
-    - Test --> Inspect the code"""
 
     @staticmethod
     def get_last_program_log(exercise_log: ExerciseLog) -> ProgramLog:
@@ -54,7 +48,7 @@ class ExerciseLogProcessor:
     @staticmethod
     def get_time_on_exercise(exercise_log: ExerciseLog) -> float:
         return (exercise_log.end_time - exercise_log.start_time).total_seconds()
-    
+
     @staticmethod
     def get_written_response_data(exercise_log: ExerciseLog) -> list[list[DebuggingStage, str, any, str]]:
         responses: list[list[DebuggingStage, str, any, str]] = []
@@ -64,3 +58,13 @@ class ExerciseLogProcessor:
                 responses.append(response_data)
         responses.sort(key=lambda x: (x[0], x[2]))
         return responses
+    
+    @staticmethod
+    def get_time_focused(exercise_log: ExerciseLog) -> float:
+        #Returns time spent focused on exercise as a percentage of time spent on exercise
+        time_focused: float = 0
+        time_on_exercise: float = ExerciseLogProcessor.get_time_on_exercise(exercise_log)
+        for stage_log in exercise_log.stage_logs:
+            time_focused_on_stage = StageLogProcessor.get_time_focused(stage_log)
+            time_focused += time_focused_on_stage
+        return (time_focused / time_on_exercise) * 100

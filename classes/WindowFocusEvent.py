@@ -13,7 +13,7 @@ class WindowFocusEvent:
         return self._focus
     
     @property
-    def time(self) -> str:
+    def time(self) -> datetime:
         return self._time
     
     @staticmethod

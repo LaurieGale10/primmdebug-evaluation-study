@@ -9,8 +9,9 @@ def format_start_end_times(exercise_log: ExerciseLog) -> ExerciseLog:
     Args:
         exercise_log (ExerciseLog): Exercise log object containing sorted exercise logs.
     """
-
-    #Set first stage log start time (length of stage logs is guaranteed to be at least 1)
+    #If the first focus event (if existent) of the exercise log preces the start time of the exercise (known bug with logging), change the start time of the exercise
+    if exercise_log.stage_logs[0].focus_events is not None and exercise_log.stage_logs[0].focus_events[0].time < exercise_log.start_time:
+        setattr(exercise_log, '_start_time', exercise_log.stage_logs[0].focus_events[0].time)
     setattr(exercise_log.stage_logs[0], '_start_time', exercise_log.start_time)
     i: int = 1
     while (i < len(exercise_log.stage_logs)) and (exercise_log.stage_logs[i].stage_name != DebuggingStage.exit):
