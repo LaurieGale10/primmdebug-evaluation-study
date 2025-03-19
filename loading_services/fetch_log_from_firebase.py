@@ -2,7 +2,7 @@ import firebase_admin
 from firebase_admin import firestore
 from firebase_admin import credentials
 
-from loading_services.parse_logs import *
+from save_logs import save_exercises
 
 global db
 
@@ -10,6 +10,15 @@ def get_firestore_client():
     cred = credentials.Certificate("loading_services/firebase_service_account_key.json")
     firebase_admin.initialize_app(cred)
     return firestore.client()
+
+def load_exercises_from_firebase() -> list[dict]:
+    exercises = db.collection("exercises").stream()
+    raw_exercises = []
+    for doc in exercises:
+        doc_dict = doc.to_dict()
+        doc_dict["id"] = doc.id
+        raw_exercises.append(doc_dict)
+    return raw_exercises
 
 def load_exercise_logs_from_firebase(mock_data: bool = False) -> list[dict]:
     exercise_log_docs = db.collection("exercise_logs").stream() if not mock_data else db.collection("mock_exercise_logs").stream()

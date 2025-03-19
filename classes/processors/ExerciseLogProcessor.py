@@ -68,3 +68,22 @@ class ExerciseLogProcessor:
             time_focused_on_stage = StageLogProcessor.get_time_focused(stage_log)
             time_focused += time_focused_on_stage
         return (time_focused / time_on_exercise) * 100
+    
+
+    @staticmethod
+    def were_test_cases_viewed(exercise_log: ExerciseLog) -> bool:
+        """Checks whether the test case panes were viewed at any point during the PRIMMDebug exercise
+        (i.e., in any of the PRIMMDebug stages that displayed the test case pane)
+
+        Args:
+            exercise_log (ExerciseLog): The exercise_log to perform the function on
+
+        Returns:
+            bool: A bool value indicating whether a test case pane was viewed at any point during the exercise. Returns None if the exercise doesn't contain test case pane.
+        """
+        stages_with_test_case_pane: list[DebuggingStage] = [DebuggingStage.inspect_code, DebuggingStage.test]
+        relevant_exercise_stages: list[StageLog] = [stage for stage in exercise_log.stage_logs if stage.stage_name in stages_with_test_case_pane]
+        for stage in relevant_exercise_stages:
+            if stage.test_case_logs is not None:
+                return True
+        return False
