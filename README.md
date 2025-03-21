@@ -1,4 +1,4 @@
-# PRIMMDebug Research Study: Student Survey Analysis
+# PRIMMDebug Research Study: Log Data Analysis
 
 A repository containing the analysis code for the log data gathered from secondary students in an initial research study of [PRIMMDebug](http://primmdebug.web.app).
 
