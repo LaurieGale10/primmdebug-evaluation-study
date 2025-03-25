@@ -3,6 +3,7 @@ from classes import ProgramLog
 from classes.ExerciseLog import ExerciseLog
 from classes.StageLog import StageLog
 from classes.processors.StageLogProcessor import StageLogProcessor
+from classes.WrittenResponse import WrittenResponse
 from enums import DebuggingStage
 
 class ExerciseLogProcessor:
@@ -50,13 +51,12 @@ class ExerciseLogProcessor:
         return (exercise_log.end_time - exercise_log.start_time).total_seconds()
 
     @staticmethod
-    def get_written_response_data(exercise_log: ExerciseLog) -> list[list[DebuggingStage, str, any, str]]:
-        responses: list[list[DebuggingStage, str, any, str]] = []
+    def get_written_response_data(exercise_log: ExerciseLog) -> list[WrittenResponse]:
+        responses: list[WrittenResponse] = []
         for stage_log in exercise_log.stage_logs:
             if stage_log.stage_name in [DebuggingStage.predict, DebuggingStage.spot_defect, DebuggingStage.inspect_code, DebuggingStage.fix_error]:
-                response_data: list[DebuggingStage, str, any, str] = [exercise_log.exercise_name, stage_log.stage_name, stage_log.end_time, stage_log.response]
+                response_data: WrittenResponse = WrittenResponse(exercise_log.exercise_name, stage_log.stage_name, stage_log.end_time, stage_log.response)
                 responses.append(response_data)
-        responses.sort(key=lambda x: (x[0], x[2]))
         return responses
     
     @staticmethod

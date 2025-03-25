@@ -2,12 +2,20 @@ import json
 import csv
 
 from classes.ExerciseLog import ExerciseLog
+from classes.WrittenResponse import WrittenResponse
 from classes.processors.ExerciseLogProcessor import ExerciseLogProcessor
+from enums import DebuggingStage
 
 """
     These methods save unparsed logs to local .json files
     This is to avoid writing pointless .to_dict() functions in each class, as they're not needed for anything else
 """
+
+def save_exercises(exercises: list[dict], file_name: str = "exercises"):
+    with open(f"data/{file_name}.json", "w") as f:
+        f.write("[\n")
+        f.write(",\n".join([json.dumps(doc, indent=4, default=str) for doc in exercises]))
+        f.write("\n]")
 
 def save_exercise_logs(exercise_logs: list[dict], file_name: str = "exercise_logs"):
     with open(f"data/{file_name}.json", "w") as f:
@@ -30,6 +38,8 @@ def save_student_ids(student_ids: list[dict], file_name: str = "student_ids"):
 def save_written_responses(exercise_logs: list[ExerciseLog], file_name: str = "written_responses"):
     with open(f"data/{file_name}.csv", "w", encoding="utf-8") as file:
         writer = csv.writer(file)
-        writer.writerow(["exercise_id","stage", "end_time", "response"])
-        for exercise_log in exercise_logs:
-            writer.writerows(ExerciseLogProcessor.get_written_response_data(exercise_log))
+        writer.writerow(["time", "exercise_id", "stage", "response"])
+        written_responses: list[WrittenResponse] = [response for exercise_log in exercise_logs for response in ExerciseLogProcessor.get_written_response_data(exercise_log)]
+        written_responses.sort(key=lambda r: (r.end_time.year, r.end_time.month, r.end_time.day, r.exercise_name, list(DebuggingStage).index(r.debugging_stage)))
+        for response in written_responses:
+            writer.writerow([response.end_time.strftime("%d/%m/%Y"), response.exercise_name, DebuggingStage(response.debugging_stage).value, response.response])
