@@ -112,7 +112,7 @@ class StageLog:
             time = raw_logs["time"],
             stage_string = raw_logs["stage"],
             program_logs = parsed_program_logs if parsed_program_logs is not None else None,
-            response = raw_logs["response"] if "response" in raw_logs else None,
+            response = raw_logs["response"] if "response" in raw_logs else None, #TODO: Change to get()
             correct = raw_logs["correct"] if "correct" in raw_logs else None,
             focus_events = parsed_window_focus_events if parsed_window_focus_events is not None else None,
             test_case_logs = parsed_test_case_log if parsed_test_case_log is not None else None,

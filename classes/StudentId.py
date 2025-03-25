@@ -31,4 +31,4 @@ class StudentId:
         )
     
     def __repr__(self):
-        return f'StudentId(\'{self._id}\', \'{self._school}\', {self._date_first_accessed})'
+        return f'StudentId(\'{self._id}\', \'{self._school}\', {self._date_first_accessed if self._date_first_accessed is not None else None})'

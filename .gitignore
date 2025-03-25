@@ -3,7 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-#Ignores in personal files
+#Ignore personal files
 firebase_service_account_key.json
 #Data folder currently ignored to prevent pushing intermediary, unchecked log data to repo
 data/
+#Files related to analysis that was sent to participating teachers
+teacher_analysis
