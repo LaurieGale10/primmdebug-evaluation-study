@@ -101,8 +101,8 @@ class StageLog:
                 parsed_window_focus_events.append(WindowFocusEvent.parse_window_focus_event(raw_window_focus_event))
         
         parsed_test_case_log = None
-        if "testCaseLog" in raw_logs:
-            parsed_test_case_log = TestCaseLog.parse_test_case_log(raw_logs["testCaseLog"])
+        if "testCaseLogs" in raw_logs:
+            parsed_test_case_log = TestCaseLog.parse_test_case_log(raw_logs["testCaseLogs"])
         
         parsed_hint_pane_log = None
         if "hintPaneLogs" in raw_logs:

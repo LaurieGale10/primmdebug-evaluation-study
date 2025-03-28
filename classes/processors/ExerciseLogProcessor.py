@@ -71,19 +71,23 @@ class ExerciseLogProcessor:
     
 
     @staticmethod
-    def were_test_cases_viewed(exercise_log: ExerciseLog) -> bool:
+    def were_test_cases_viewed(exercise_log: ExerciseLog, stages: list[DebuggingStage] = [DebuggingStage.inspect_code, DebuggingStage.test]) -> bool:
         """Checks whether the test case panes were viewed at any point during the PRIMMDebug exercise
         (i.e., in any of the PRIMMDebug stages that displayed the test case pane)
 
         Args:
             exercise_log (ExerciseLog): The exercise_log to perform the function on
+            stages (list[DebuggingStage], optional): The stages to check for test case pane views. Defaults to [DebuggingStage.inspect_code, DebuggingStage.test]. Other valid arguments are just [DebuggingStage.inspect_code] or [DebuggingStage.test] 
 
         Returns:
             bool: A bool value indicating whether a test case pane was viewed at any point during the exercise. Returns None if the exercise doesn't contain test case pane.
         """
-        stages_with_test_case_pane: list[DebuggingStage] = [DebuggingStage.inspect_code, DebuggingStage.test]
-        relevant_exercise_stages: list[StageLog] = [stage for stage in exercise_log.stage_logs if stage.stage_name in stages_with_test_case_pane]
+        relevant_exercise_stages: list[StageLog] = [stage for stage in exercise_log.stage_logs if stage.stage_name in stages]
         for stage in relevant_exercise_stages:
             if stage.test_case_logs is not None:
                 return True
         return False
+
+    @staticmethod
+    def did_exercise_move_to_modify(exercise_log: ExerciseLog) -> bool:
+        return ExerciseLogProcessor.get_last_stage(exercise_log).stage_name == "modify"
