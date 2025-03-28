@@ -18,3 +18,9 @@ class StageLogProcessor:
                 time_not_focused += focus_period
             return time_on_stage - time_not_focused
         return time_on_stage
+    
+    @staticmethod
+    def does_inspect_the_code_contain_response(stage_log: StageLog) -> bool:
+        if stage_log.stage_name != DebuggingStage.inspect_code:
+            raise ValueError("Debugging stage for this function must be DebuggingStage.inspect_code")
+        return stage_log.response is not None and bool(stage_log.response.strip())
