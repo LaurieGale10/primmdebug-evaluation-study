@@ -1,6 +1,5 @@
 import datetime
 
-
 class TimestampParser:
     @staticmethod
     def print_timestamp(timestamp) -> str:

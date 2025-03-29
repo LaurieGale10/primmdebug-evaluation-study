@@ -1,7 +1,6 @@
 from classes.ChangePaneContentEvent import ChangePaneContentEvent
 from classes.TogglePaneExpansionEvent import TogglePaneExpansionEvent
 
-
 class TestCaseLog:
     def __init__(self, expansion_changes: list[TogglePaneExpansionEvent] = None, pane_content_changes: list[ChangePaneContentEvent] = None):
         self._expansion_changes: list[TogglePaneExpansionEvent] = expansion_changes

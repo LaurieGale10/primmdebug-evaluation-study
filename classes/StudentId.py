@@ -2,7 +2,6 @@ import datetime
 
 from classes.TimestampParser import TimestampParser
 
-
 class StudentId:
     def __init__(self, id: str, school: str, date_first_accessed: str = None):
         self._id: str = id
@@ -27,7 +26,7 @@ class StudentId:
         return StudentId(
             id = raw_logs["id"],
             school = raw_logs["school"],
-            date_first_accessed = raw_logs["dateFirstAccessed"] if "dateFirstAccessed" in raw_logs else None
+            date_first_accessed = raw_logs.get("dateFirstAccessed")
         )
     
     def __repr__(self):

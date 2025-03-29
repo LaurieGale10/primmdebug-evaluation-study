@@ -3,7 +3,6 @@ import datetime
 from classes.TimestampParser import TimestampParser
 from enums import PaneView
 
-
 class TogglePaneExpansionEvent:
     def __init__(self, new_pane_view: PaneView, time: str):
         self._new_pane_view: PaneView = new_pane_view

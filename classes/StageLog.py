@@ -111,12 +111,12 @@ class StageLog:
             id = raw_logs["id"],
             time = raw_logs["time"],
             stage_string = raw_logs["stage"],
-            program_logs = parsed_program_logs if parsed_program_logs is not None else None,
-            response = raw_logs["response"] if "response" in raw_logs else None, #TODO: Change to get()
-            correct = raw_logs["correct"] if "correct" in raw_logs else None,
-            focus_events = parsed_window_focus_events if parsed_window_focus_events is not None else None,
-            test_case_logs = parsed_test_case_log if parsed_test_case_log is not None else None,
-            hint_pane_logs = parsed_hint_pane_log if parsed_hint_pane_log is not None else None
+            program_logs = parsed_program_logs,
+            response = raw_logs.get("response"),
+            correct = raw_logs.get("correct"),
+            focus_events = parsed_window_focus_events,
+            test_case_logs = parsed_test_case_log,
+            hint_pane_logs = parsed_hint_pane_log
     )
     
     def __repr__(self):

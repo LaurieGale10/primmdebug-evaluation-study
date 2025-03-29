@@ -3,7 +3,6 @@ import datetime
 from classes.IOEvent import IOEvent
 from classes.TimestampParser import TimestampParser
 
-
 class ProgramLog:
     def __init__(self, snapshot: str, timestamp: str, compiled: bool, io_events: list[IOEvent]):
         self._snapshot: str = snapshot
@@ -32,12 +31,12 @@ class ProgramLog:
         parsed_io_events = []
         for raw_io_event in raw_log["io"]:
             parsed_io_events.append(IOEvent.parse_io_event(raw_io_event))
-            return ProgramLog(
-                snapshot = raw_log["snapshot"],
-                timestamp = raw_log["timestamp"],
-                compiled = raw_log["compiled"],
-                io_events = parsed_io_events
-            )
+        return ProgramLog(
+            snapshot = raw_log["snapshot"],
+            timestamp = raw_log["timestamp"],
+            compiled = raw_log["compiled"],
+            io_events = parsed_io_events
+        )
         
     def __repr__(self):
         return f'ProgramLog(\'{self._snapshot}\', {self._timestamp}, {self._compiled}, {self._io_events})'

@@ -1,7 +1,6 @@
 from classes.ChangePaneContentEvent import ChangePaneContentEvent
 from classes.TogglePaneExpansionEvent import TogglePaneExpansionEvent
 
-
 class HintPaneLog:
     def __init__(self, expansion_changes: list[TogglePaneExpansionEvent] = None, pane_content_changes: list[ChangePaneContentEvent] = None):
         self._expansion_changes: list[TogglePaneExpansionEvent] = expansion_changes
@@ -28,8 +27,8 @@ class HintPaneLog:
             for raw_pane_content_change in raw_logs["paneContentChanges"]:
                 parsed_pane_content_changes.append(ChangePaneContentEvent.parse_pane_content_change_log(raw_pane_content_change))
         return HintPaneLog(
-            expansion_changes = parsed_expansion_changes if parsed_expansion_changes is not None else None,
-            pane_content_changes = parsed_pane_content_changes if parsed_pane_content_changes is not None else None
+            expansion_changes = parsed_expansion_changes,
+            pane_content_changes = parsed_pane_content_changes
         )
 
     def __repr__(self):
