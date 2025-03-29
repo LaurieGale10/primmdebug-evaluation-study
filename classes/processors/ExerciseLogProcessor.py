@@ -51,12 +51,21 @@ class ExerciseLogProcessor:
         return (exercise_log.end_time - exercise_log.start_time).total_seconds()
 
     @staticmethod
-    def get_written_response_data(exercise_log: ExerciseLog) -> list[WrittenResponse]:
+    def get_written_response_data(exercise_log: ExerciseLog) -> list[WrittenResponse]: #TODO: Move to different save_logs.py as this doesn't concern data used directly for log data
         responses: list[WrittenResponse] = []
         for stage_log in exercise_log.stage_logs:
             if stage_log.stage_name in [DebuggingStage.predict, DebuggingStage.spot_defect, DebuggingStage.inspect_code, DebuggingStage.fix_error]:
                 response_data: WrittenResponse = WrittenResponse(exercise_log.exercise_name, stage_log.stage_name, stage_log.end_time, stage_log.response)
                 responses.append(response_data)
+        return responses
+    
+    @staticmethod
+    def get_written_responses(exercise_log: ExerciseLog) -> list[str]:
+        responses: list[str] = []
+        for stage_log in exercise_log.stage_logs:
+            if stage_log.stage_name in [DebuggingStage.predict, DebuggingStage.spot_defect, DebuggingStage.inspect_code, DebuggingStage.fix_error]:
+                if stage_log.response is not None and bool(stage_log.response.strip()):
+                    responses.append(stage_log.response)
         return responses
     
     @staticmethod
