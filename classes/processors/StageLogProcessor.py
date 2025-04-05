@@ -1,4 +1,7 @@
 from classes.StageLog import StageLog
+from classes.exercise_classes.Exercise import Exercise
+from classes.processors.ProgramLogProcessor import ProgramLogProcessor
+
 from enums import DebuggingStage
 
 class StageLogProcessor:
@@ -24,3 +27,53 @@ class StageLogProcessor:
         if stage_log.stage_name != DebuggingStage.inspect_code:
             raise ValueError("Debugging stage for this function must be DebuggingStage.inspect_code")
         return stage_log.response is not None and bool(stage_log.response.strip())
+    
+    @staticmethod
+    def compare_provided_and_student_test_cases(stage_log: StageLog, exercise: Exercise) -> bool:
+        """Compares the test cases the student entered with the ones provided in the PRIMMDebug challenge
+        Could be done in several ways:
+        - Compare number of matching and unmatching test cases
+        - Return number of student entered test cases that match the challenge-provided ones
+        """
+        valid_stages: list[DebuggingStage] = [DebuggingStage.run, DebuggingStage.inspect_code, DebuggingStage.test]
+        if stage_log.stage_name not in valid_stages:
+            raise ValueError(f"Debugging stage for this function must be run, inspect_code or test, not {DebuggingStage(stage_log.stage_name).value}")
+
+    @staticmethod
+    def get_number_of_runs(stage_log: StageLog) -> int:
+        valid_stages: list[DebuggingStage] = [DebuggingStage.inspect_code, DebuggingStage.test]
+        if stage_log.stage_name not in valid_stages:
+            raise ValueError(f"Debugging stage for this function must be inspect_code or test, not {DebuggingStage(stage_log.stage_name).value}")
+        return len(stage_log.program_logs) if stage_log.program_logs is not None else 0
+
+    @staticmethod
+    def get_time_between_runs(stage_log: StageLog) -> list[float]:
+        valid_stages: list[DebuggingStage] = [DebuggingStage.inspect_code, DebuggingStage.test]
+        if stage_log.stage_name not in valid_stages:
+            raise ValueError(f"Debugging stage for this function must be inspect_code or test, not {DebuggingStage(stage_log.stage_name).value}")
+        if stage_log.program_logs is None:
+            return []
+        time_between_runs: list[float] = []
+        for i in range(1, len(stage_log.program_logs)):
+            time_between_runs.append((stage_log.program_logs[i].timestamp - stage_log.program_logs[i - 1].timestamp).total_seconds())
+        return time_between_runs
+
+    @staticmethod
+    def get_runs_per_minute(stage_log: StageLog) -> float:
+        valid_stages: list[DebuggingStage] = [DebuggingStage.inspect_code, DebuggingStage.test]
+        if stage_log.stage_name not in valid_stages:
+            raise ValueError(f"Debugging stage for this function must be inspect_code or test, not {DebuggingStage(stage_log.stage_name).value}")
+        if stage_log.program_logs is None:
+            return 0
+        number_of_runs: int = len(stage_log.program_logs)
+        time_on_runs: float = (stage_log.program_logs[-1].timestamp - stage_log.program_logs[0].timestamp).total_seconds() #Time between first and last run (in seconds)
+        return (number_of_runs) / (time_on_runs / 60) if number_of_runs > 1 else 0
+    
+    @staticmethod
+    def get_number_of_inputs_from_runs(stage_log: StageLog) -> list[int]:
+        valid_stages: list[DebuggingStage] = [DebuggingStage.inspect_code, DebuggingStage.test]
+        if stage_log.stage_name not in valid_stages:
+            raise ValueError(f"Debugging stage for this function must be inspect_code or test, not {DebuggingStage(stage_log.stage_name).value}")
+        if stage_log.program_logs is None:
+            return []
+        return [ProgramLogProcessor.get_number_of_inputs(program_log) for program_log in stage_log.program_logs] if stage_log.program_logs is not None else []
