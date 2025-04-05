@@ -1,4 +1,3 @@
-import datetime
 from classes import ProgramLog
 from classes.ExerciseLog import ExerciseLog
 from classes.StageLog import StageLog
@@ -50,15 +49,6 @@ class ExerciseLogProcessor:
     def get_time_on_exercise(exercise_log: ExerciseLog) -> float:
         return (exercise_log.end_time - exercise_log.start_time).total_seconds()
 
-    @staticmethod
-    def get_written_response_data(exercise_log: ExerciseLog) -> list[WrittenResponse]: #TODO: Move to different save_logs.py as this doesn't concern data used directly for log data
-        responses: list[WrittenResponse] = []
-        for stage_log in exercise_log.stage_logs:
-            if stage_log.stage_name in [DebuggingStage.predict, DebuggingStage.spot_defect, DebuggingStage.inspect_code, DebuggingStage.fix_error]:
-                response_data: WrittenResponse = WrittenResponse(exercise_log.exercise_name, stage_log.stage_name, stage_log.end_time, stage_log.response)
-                responses.append(response_data)
-        return responses
-    
     @staticmethod
     def get_written_responses(exercise_log: ExerciseLog) -> list[str]:
         responses: list[str] = []

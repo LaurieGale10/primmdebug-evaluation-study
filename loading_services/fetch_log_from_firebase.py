@@ -2,8 +2,6 @@ import firebase_admin
 from firebase_admin import firestore
 from firebase_admin import credentials
 
-from save_logs import save_exercises
-
 global db
 
 def get_firestore_client():

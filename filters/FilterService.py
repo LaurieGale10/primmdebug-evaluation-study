@@ -1,6 +1,7 @@
 from classes.ExerciseLog import ExerciseLog
 from classes.StageLog import StageLog
 from classes.StudentId import StudentId
+from enums import DebuggingStage
 
 class FilterService:
 
@@ -8,7 +9,7 @@ class FilterService:
     def filter_student_ids_by_school(student_ids: list[StudentId], school: str) -> list[StudentId]:
         if not school:
             raise ValueError("The 'school' argument must be defined.")
-        filtered_student_ids: list[StudentId] = [student_id for student_id in student_ids if student_id.school == school]
+        filtered_student_ids: list[StudentId] = [student_id for student_id in student_ids if student_id.school == school and hasattr(student_id, "date_first_accessed")]
         return filtered_student_ids
 
     @staticmethod
@@ -28,3 +29,7 @@ class FilterService:
             list[StageLog]: A list of stage logs that exist within the passed in list of exercise logs
         """
         return [stage_log for exercise_log in exercise_logs for stage_log in exercise_log.stage_logs]
+    
+    @staticmethod
+    def filter_stage_logs_by_stage_name(stage_logs: list[StageLog], stage_name: DebuggingStage) -> list[StageLog]:
+        return [stage_log for stage_log in stage_logs if stage_log.stage_name == stage_name]

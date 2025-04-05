@@ -47,8 +47,7 @@ class StageLogProcessor:
         return len(stage_log.program_logs) if stage_log.program_logs is not None else 0
 
     @staticmethod
-    def get_time_between_runs(stage_log: StageLog) -> list[float]:
-        valid_stages: list[DebuggingStage] = [DebuggingStage.inspect_code, DebuggingStage.test]
+    def get_time_between_runs(stage_log: StageLog, valid_stages: list[DebuggingStage] = [DebuggingStage.inspect_code, DebuggingStage.test]) -> list[float]:
         if stage_log.stage_name not in valid_stages:
             raise ValueError(f"Debugging stage for this function must be inspect_code or test, not {DebuggingStage(stage_log.stage_name).value}")
         if stage_log.program_logs is None:
@@ -59,8 +58,7 @@ class StageLogProcessor:
         return time_between_runs
 
     @staticmethod
-    def get_runs_per_minute(stage_log: StageLog) -> float:
-        valid_stages: list[DebuggingStage] = [DebuggingStage.inspect_code, DebuggingStage.test]
+    def get_runs_per_minute(stage_log: StageLog, valid_stages: list[DebuggingStage] = [DebuggingStage.inspect_code, DebuggingStage.test]) -> float:
         if stage_log.stage_name not in valid_stages:
             raise ValueError(f"Debugging stage for this function must be inspect_code or test, not {DebuggingStage(stage_log.stage_name).value}")
         if stage_log.program_logs is None:
@@ -70,10 +68,17 @@ class StageLogProcessor:
         return (number_of_runs) / (time_on_runs / 60) if number_of_runs > 1 else 0
     
     @staticmethod
-    def get_number_of_inputs_from_runs(stage_log: StageLog) -> list[int]:
-        valid_stages: list[DebuggingStage] = [DebuggingStage.inspect_code, DebuggingStage.test]
+    def get_number_of_inputs_from_runs(stage_log: StageLog, valid_stages: list[DebuggingStage] = [DebuggingStage.run, DebuggingStage.inspect_code, DebuggingStage.test]) -> list[int]:
         if stage_log.stage_name not in valid_stages:
             raise ValueError(f"Debugging stage for this function must be inspect_code or test, not {DebuggingStage(stage_log.stage_name).value}")
         if stage_log.program_logs is None:
             return []
         return [ProgramLogProcessor.get_number_of_inputs(program_log) for program_log in stage_log.program_logs] if stage_log.program_logs is not None else []
+    
+    @staticmethod
+    def get_inputs_from_runs(stage_log: StageLog, valid_stages: list[DebuggingStage] = [DebuggingStage.run, DebuggingStage.inspect_code, DebuggingStage.test]) -> list[list[str]]:
+        if stage_log.stage_name not in valid_stages:
+            raise ValueError(f"Debugging stage for this function must be inspect_code or test, not {DebuggingStage(stage_log.stage_name).value}")
+        if stage_log.program_logs is None:
+            return []
+        return [ProgramLogProcessor.get_inputs(program_log) for program_log in stage_log.program_logs] if stage_log.program_logs is not None else []
