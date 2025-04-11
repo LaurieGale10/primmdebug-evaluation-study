@@ -2,7 +2,7 @@ from classes.ExerciseLog import ExerciseLog
 from classes.StageLog import StageLog
 from classes.StudentId import StudentId
 from classes.exercise_classes.Exercise import Exercise
-from clean_logs import *
+from loading_services.clean_logs import *
 from enums import DebuggingStage
 
 def parse_exercises(raw_data: list[dict]) -> list[Exercise]:
