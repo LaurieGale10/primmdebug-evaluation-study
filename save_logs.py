@@ -1,9 +1,9 @@
 import json
 import csv
 
-from classes.ExerciseLog import ExerciseLog
-from classes.WrittenResponse import WrittenResponse
-from classes.processors.ExerciseLogProcessor import ExerciseLogProcessor
+from classes.exercise_log import ExerciseLog
+from classes.written_response import WrittenResponse
+from classes.processors.exercise_log_processor import ExerciseLogProcessor
 from enums import DebuggingStage
 
 """
