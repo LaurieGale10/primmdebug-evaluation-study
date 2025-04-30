@@ -1,6 +1,6 @@
-from classes.StageLog import StageLog
-from classes.exercise_classes.Exercise import Exercise
-from classes.processors.ProgramLogProcessor import ProgramLogProcessor
+from classes.stage_log import StageLog
+from classes.exercise_classes.exercise import Exercise
+from classes.processors.program_log_processor import ProgramLogProcessor
 
 from enums import DebuggingStage
 

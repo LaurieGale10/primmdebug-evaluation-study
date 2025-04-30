@@ -1,10 +1,10 @@
 import datetime
 
-from classes.HintPaneLog import HintPaneLog
-from classes.ProgramLog import ProgramLog
-from classes.TestCaseLog import TestCaseLog
-from classes.WindowFocusEvent import WindowFocusEvent
-from classes.TimestampParser import TimestampParser
+from classes.hint_pane_log import HintPaneLog
+from classes.program_log import ProgramLog
+from classes.test_case_log import TestCaseLog
+from classes.window_focus_event import WindowFocusEvent
+from classes.timestamp_parser import TimestampParser
 from enums import DebuggingStage
 
 class StageLog:

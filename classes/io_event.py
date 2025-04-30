@@ -1,6 +1,6 @@
 import datetime
 
-from classes.TimestampParser import TimestampParser
+from classes.timestamp_parser import TimestampParser
 from enums import IOType
 
 class IOEvent:

@@ -1,4 +1,4 @@
-from classes.ProgramLog import ProgramLog
+from classes.program_log import ProgramLog
 from enums import IOType
 
 class ProgramLogProcessor:

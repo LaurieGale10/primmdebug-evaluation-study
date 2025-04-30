@@ -1,5 +1,5 @@
-from classes.ChangePaneContentEvent import ChangePaneContentEvent
-from classes.TogglePaneExpansionEvent import TogglePaneExpansionEvent
+from classes.change_pane_content_event import ChangePaneContentEvent
+from classes.toggle_pane_expansion_event import TogglePaneExpansionEvent
 
 class HintPaneLog:
     def __init__(self, expansion_changes: list[TogglePaneExpansionEvent] = None, pane_content_changes: list[ChangePaneContentEvent] = None):

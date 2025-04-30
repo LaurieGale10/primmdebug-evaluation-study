@@ -1,4 +1,4 @@
-from classes.exercise_classes.TestCase import TestCase
+from classes.exercise_classes.test_case import TestCase
 from enums import DebuggingStage
 
 class Exercise:
