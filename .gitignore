@@ -9,3 +9,5 @@ firebase_service_account_key.json
 data/
 #Files related to analysis that was sent to participating teachers
 teacher_results
+#VS-code specific files
+.vscode
