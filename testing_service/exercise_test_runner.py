@@ -26,9 +26,6 @@ class ExerciseTestRunner:
                     return False
 
         try:
-            print(test_case.expected_output)
-            print(test_case.inputs)
-            print(mock_output.getvalue())
             assert mock_output.getvalue() == test_case.expected_output
             return True
         except AssertionError:
