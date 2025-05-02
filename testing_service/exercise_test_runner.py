@@ -4,6 +4,7 @@ import io
 from unittest.mock import patch
 
 class ExerciseTestRunner:
+    
     @staticmethod
     def run_test_case(program_filename: str, test_case: TestCase) -> bool:
         """Runs a a single test case on a student's program the test case passed or failed.
@@ -18,8 +19,10 @@ class ExerciseTestRunner:
         with open(f"{program_filename}.py") as program: #Should this have an except or just keep running?
             with patch('builtins.input', side_effect=test_case.inputs), patch('sys.stdout', new_callable=io.StringIO) as mock_output:
                 try:
-                    exec(program.read()) #Might not work when running in non-relative directory, so might have to switch back to importing
-                except:
+                    exec(program.read())  # Might not work when running in non-relative directory, so might have to switch back to importing
+                except Exception as e:
+                    if test_case.exception_type is not None and isinstance(e, test_case.exception_type):
+                        return True
                     return False
 
         try:
