@@ -12,8 +12,8 @@ class FunnySentenceTest:
             expected_output="Wow! I just saw 1000 massive tigers juggling pineapples down the street!\n"
         ),
         TestCase(
-            inputs=["Zero","small","mouse"], #Need to work out how to check whether an error has been appropriately caught
-            expected_output="ValueError: invalid literal for int() with base 10: 'Zero' on line 1\n"
+            inputs=["Zero","small","mouse"],
+            exception_type=ValueError
         )
     ]
 
