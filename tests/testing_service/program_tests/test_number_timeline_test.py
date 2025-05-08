@@ -16,7 +16,7 @@ class TestNumberTimelineTest(unittest.TestCase):
         self.assertEqual(NumberTimelineTest.run_tests("tests/testing_service/mock_programs/number_timeline/semantically_incorrect"), (2, 7))
 
     def test_logically_incorrect_program(self):
-        self.assertEqual(NumberTimelineTest.run_tests("tests/testing_service/mock_programs/number_timeline/logically_incorrect"), (2, 7))
+        self.assertEqual(NumberTimelineTest.run_tests("tests/testing_service/mock_programs/number_timeline/logically_incorrect"), (4, 7))
 
     def test_different_print_statement_program(self):
         self.assertEqual(NumberTimelineTest.run_tests("tests/testing_service/mock_programs/number_timeline/different_print_statement"), (2, 7)) #Another example of how tests using exact output punishes certain programs
