@@ -6,7 +6,7 @@ from unittest.mock import patch
 class ExerciseTestRunner:
     
     @staticmethod
-    def run_test_case(program_filename: str, test_case: TestCase) -> bool:
+    def run_test_case(program_filename: str, test_case: TestCase, debug: bool = False) -> bool:
         """Runs a a single test case on a student's program the test case passed or failed.
 
         Args:
@@ -17,22 +17,29 @@ class ExerciseTestRunner:
             bool: Whether the test case passed or failed (the output must be exactly correct to pass).
         """
         with open(f"{program_filename}.py") as program: #Should this have an except or just keep running?
-            with patch('builtins.input', side_effect=test_case.inputs), patch('sys.stdout', new_callable=io.StringIO) as mock_output:
+            with patch('builtins.input', side_effect=test_case.inputs), \
+                 patch('sys.stdout', new_callable=io.StringIO) as mock_output, \
+                 patch('random.choice', side_effect=test_case.random_values) if test_case.random_values is not None else patch('random.choice', side_effect=lambda x: x[0]):
                 try:
-                    exec(program.read())  # Might not work when running in non-relative directory, so might have to switch back to importing
+                    exec(program.read())
                 except Exception as e:
                     if test_case.exception_type is not None and isinstance(e, test_case.exception_type):
                         return True
                     return False
 
         try:
+            if debug:
+                print(test_case.inputs)
+                print(test_case.expected_output)
+                print(mock_output.getvalue())
+                print(mock_output.getvalue() == test_case.expected_output)
             assert mock_output.getvalue() == test_case.expected_output
             return True
         except AssertionError:
             return False
 
     @staticmethod
-    def run_tests(program_filename: str, test_cases: TestCase) -> tuple[int, int]:
+    def run_tests(program_filename: str, test_cases: TestCase, debug: bool = False) -> tuple[int, int]:
         """Tests the correctness of a student's program (saved to a file) by running a set of test cases.
 
         Args:
@@ -44,7 +51,7 @@ class ExerciseTestRunner:
         completed_tests = 0
         successful_tests = 0
         for test_case in test_cases:
-            if ExerciseTestRunner.run_test_case(program_filename, test_case):
+            if ExerciseTestRunner.run_test_case(program_filename, test_case, debug=debug):
                 successful_tests += 1
             completed_tests += 1
         return successful_tests, completed_tests
