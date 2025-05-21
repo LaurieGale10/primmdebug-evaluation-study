@@ -1,5 +1,5 @@
 import unittest
-from testing_service.program_tests.capital_of_hungary import CapitalOfHungaryTest
+from testing_service.program_tests.capital_of_hungary_test import CapitalOfHungaryTest
 
 class TestCapitalOfHungaryTest(unittest.TestCase):
     def test_correct_program(self):

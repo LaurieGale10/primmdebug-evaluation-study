@@ -21,6 +21,7 @@ class CapitalOfHungaryTest:
         ),
     ]
 
+#TODO: Put this in a if __name__ == "__main__" block and save the test results
     @staticmethod
     def run_tests(program_filename: str) -> tuple[int, int]:
         return ExerciseTestRunner.run_tests(program_filename, CapitalOfHungaryTest.test_cases)
