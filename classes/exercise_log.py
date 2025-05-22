@@ -5,11 +5,12 @@ from classes.timestamp_parser import TimestampParser
 from enums import DebuggingStage
 
 class ExerciseLog:
-    def __init__(self, student_id: str, exercise_name: str, stage_logs: list[StageLog], start_time: str, session: int):
+    def __init__(self, student_id: str, exercise_name: str, stage_logs: list[StageLog], start_time: str, end_time: str, session: int):
         self._student_id: str = student_id
         self._exercise_name: str = exercise_name
         self._stage_logs: list[StageLog] = ExerciseLog.sort_stage_logs(stage_logs)
         self._start_time: datetime = TimestampParser.parse_timestamp_str(start_time)
+        self._end_time: datetime = TimestampParser.parse_timestamp_str(end_time)
         self._session: int = session
     
     @property
@@ -30,7 +31,7 @@ class ExerciseLog:
     
     @property
     def end_time(self) -> datetime:
-        return self._end_time if self._end_time is not None else None
+        return self._end_time
     
     @property
     def session(self) -> int:
@@ -42,7 +43,8 @@ class ExerciseLog:
             student_id = raw_exercise_logs["studentId"],
             exercise_name = raw_exercise_logs["exerciseId"],
             stage_logs = stage_logs,
-            start_time = raw_exercise_logs["time"],
+            start_time = raw_exercise_logs["startTime"],
+            end_time = raw_exercise_logs["endTime"],
             session = raw_exercise_logs.get("session")
         )
     

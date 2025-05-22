@@ -5,11 +5,8 @@ from classes.exercise_log import ExerciseLog
 from classes.written_response import WrittenResponse
 from classes.processors.exercise_log_processor import ExerciseLogProcessor
 from enums import DebuggingStage
-
-"""
-    These methods save unparsed logs to local .json files
-    This is to avoid writing pointless .to_dict() functions in each class, as they're not needed for anything else
-"""
+from clean_logs import clean_exercise_and_stage_logs
+import fetch_log_from_firebase, fetch_logs_from_file
 
 def save_exercises(exercises: list[dict], file_name: str = "exercises"):
     with open(f"data/{file_name}.json", "w") as f:
@@ -51,3 +48,31 @@ def save_written_responses(exercise_logs: list[ExerciseLog], file_name: str = "w
         written_responses.sort(key=lambda r: (r.end_time.year, r.end_time.month, r.end_time.day, r.exercise_name, list(DebuggingStage).index(r.debugging_stage)))
         for response in written_responses:
             writer.writerow([response.end_time.strftime("%d/%m/%Y"), response.exercise_name, DebuggingStage(response.debugging_stage).value, response.response])
+
+def save_all_logs():
+    """
+    Saves all the logs (exerise data, exercise attempts, stage logs, student ids) to local .json files, by loading and cleaning data from Firebase
+    """
+    raw_student_ids: list[dict] = fetch_log_from_firebase.load_student_ids_from_firebase()
+    raw_stage_logs: list[dict] = fetch_log_from_firebase.load_stage_logs_from_firebase()
+    raw_exercise_logs: list[dict] = fetch_log_from_firebase.load_exercise_logs_from_firebase()
+    cleaned_exercise_logs, cleaned_stage_logs = clean_exercise_and_stage_logs(raw_exercise_logs, raw_stage_logs, raw_student_ids)
+
+    save_student_ids(raw_student_ids)
+    save_exercise_logs(cleaned_exercise_logs, "cleaned_exercise_logs")
+    save_stage_logs(cleaned_stage_logs, "cleaned_stage_logs")
+
+def save_clean_logs():
+    """
+    Saves all the logs (exerise data, exercise attempts, stage logs, student ids) to local .json files, by loading and cleaning data from Firebase
+    """
+    raw_student_ids: list[dict] = fetch_logs_from_file.fetch_data_from_json("data/student_ids")
+    raw_stage_logs: list[dict] = fetch_logs_from_file.fetch_data_from_json("data/stage_logs")
+    raw_exercise_logs: list[dict] = fetch_logs_from_file.fetch_data_from_json("data/exercise_logs")
+    cleaned_exercise_logs, cleaned_stage_logs = clean_exercise_and_stage_logs(raw_exercise_logs, raw_stage_logs, raw_student_ids)
+
+    save_student_ids(raw_student_ids)
+    save_exercise_logs(cleaned_exercise_logs)
+    save_stage_logs(cleaned_stage_logs)
+
+save_clean_logs()

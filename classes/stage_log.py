@@ -8,17 +8,17 @@ from classes.timestamp_parser import TimestampParser
 from enums import DebuggingStage
 
 class StageLog:
-    def __init__(self, id: str, time: str, stage_string: str, program_logs: list[ProgramLog] = None, response: str = None, correct: bool = None, focus_events: list[WindowFocusEvent] = None, test_case_logs: TestCaseLog = None, hint_pane_logs: HintPaneLog = None):
+    def __init__(self, id: str, stage_string: str, start_time: str = None, end_time: str = None, time: str = None, program_logs: list[ProgramLog] = None, response: str = None, correct: bool = None, focus_events: list[WindowFocusEvent] = None, test_case_logs: TestCaseLog = None, hint_pane_logs: HintPaneLog = None):
         self._id : str= id
         if stage_string == "exit":
             self._stage_name: DebuggingStage = DebuggingStage("exit")
-            self._time: datetime = TimestampParser.parse_timestamp_str(time)
+            self._time: datetime = TimestampParser.parse_timestamp_str(time) #Exit logs only contain a single "time" field rather than a "startTime" and "endTime" field
         else:
-            self._end_time: datetime = TimestampParser.parse_timestamp_str(time)
+            self._start_time: datetime = TimestampParser.parse_timestamp_str(start_time)
+            self._end_time: datetime = TimestampParser.parse_timestamp_str(end_time)
             self._overall_stage_number: int = int(stage_string.split("_")[0])
             self._stage_iteration: int = int(stage_string.split("_")[len(stage_string.split("_")) - 1])
             self._stage_name: DebuggingStage = DebuggingStage("_".join(stage_string.split("_")[1:-1]))
-        #TODO: Perform null checks here
         self._program_logs: list[ProgramLog] = program_logs
         self._response: str = response
         self._correct: bool = correct
@@ -36,7 +36,7 @@ class StageLog:
     
     @property
     def start_time(self) -> datetime:
-        return self._start_time if self._start_time is not None else None
+        return self._start_time
     
     @property
     def end_time(self) -> datetime:
@@ -87,6 +87,12 @@ class StageLog:
     
     @staticmethod
     def parse_stage_log(raw_logs: dict) -> 'StageLog':
+        if raw_logs["stage"] == "exit":
+            return StageLog(
+                id = raw_logs["id"],
+                time = raw_logs["time"],
+                stage_string = raw_logs["stage"]
+            )
         #Parse program logs, window focus events, test case logs, and hint pane logs
         parsed_program_logs = None
         if "programLogs" in raw_logs:
@@ -109,8 +115,9 @@ class StageLog:
             parsed_hint_pane_log = HintPaneLog.parse_hint_pane_log(raw_logs["hintPaneLogs"])
         return StageLog(
             id = raw_logs["id"],
-            time = raw_logs["time"],
             stage_string = raw_logs["stage"],
+            start_time = raw_logs["startTime"],
+            end_time = raw_logs["endTime"],
             program_logs = parsed_program_logs,
             response = raw_logs.get("response"),
             correct = raw_logs.get("correct"),

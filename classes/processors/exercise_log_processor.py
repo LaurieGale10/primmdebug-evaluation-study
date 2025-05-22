@@ -3,7 +3,11 @@ from classes.exercise_log import ExerciseLog
 from classes.stage_log import StageLog
 from classes.processors.stage_log_processor import StageLogProcessor
 from classes.written_response import WrittenResponse
+
+from testing_service.docker_interface import DockerInterface
 from enums import DebuggingStage
+
+from statistics import median
 
 class ExerciseLogProcessor:
 
@@ -27,18 +31,47 @@ class ExerciseLogProcessor:
         pass
 
     @staticmethod
-    def get_last_program_log(exercise_log: ExerciseLog) -> ProgramLog:
-        """Declare stages that may contain program logs
+    def get_last_program_log(exercise_log: ExerciseLog) -> ProgramLog | None:
+        """Returns the last program log from the exercise log.
 
-        Then iterate backwards through the stages of the exercise log to find first stage with program logs --> return
-        Else return none
+        Args:
+            exercise_log (ExerciseLog): The exercise log to get the last program log from.
+
+        Returns:
+            ProgramLog: The final (last executed) program log in the exercise log. If there aren't any program logs, None is returned.
         """
+
         stages_with_program_logs: list[DebuggingStage] = [DebuggingStage.run, DebuggingStage.inspect_code, DebuggingStage.fix_error, DebuggingStage.test]
         for i in range(len(exercise_log.stage_logs) - 1, -1, -1):
             stage_log = exercise_log.stage_logs[i]
             if stage_log.stage_name in stages_with_program_logs and stage_log.program_logs is not None:
                 return stage_log.program_logs[-1]
         return None
+    
+    def get_time_per_stage(exercise_log: ExerciseLog, take_median: bool = False) -> dict[DebuggingStage, float]:
+        """Calculates the total time spent on each PRIMMDebug stage during the challenge attempt.
+
+        If a stage has been completed multiples times, the culumative time on that stage is calculated if take_median is False, or the median time otherwise.
+
+        Args:
+            exercise_log (ExerciseLog): The exercise log to calculate the time per stage for.
+            take_median (bool, optional): Whether to calculate the median or total time on a particular stage. Defaults to False.
+
+        Returns:
+            dict[DebuggingStage, float]: A matrix of time per stage and the time for each 
+        """
+        #Originally store all times for a stage in a list, then either take the median or sum them up depending on take_median
+        times_per_individual_stage: dict[DebuggingStage, list[float]] = {stage: [] for stage in DebuggingStage}
+        for stage_log in exercise_log.stage_logs:
+            if stage_log.stage_name != DebuggingStage.exit:
+                times_per_individual_stage[stage_log.stage_name].append(StageLogProcessor.get_time_on_stage(stage_log))
+        time_per_stage: dict[DebuggingStage, float] = {stage: 0 for stage in DebuggingStage}
+        for (stage, times) in times_per_individual_stage.items():
+            if len(times) > 0:
+                time_per_stage[stage] = median(times) if take_median else sum(times)
+            else:
+                time_per_stage[stage] = 0
+        return time_per_stage
 
     @staticmethod
     def is_final_program_erroneous(exercise_log: ExerciseLog) -> bool:
@@ -90,3 +123,28 @@ class ExerciseLogProcessor:
     @staticmethod
     def did_exercise_move_to_modify(exercise_log: ExerciseLog) -> bool:
         return ExerciseLogProcessor.get_last_stage(exercise_log).stage_name == "modify"
+    
+    @staticmethod
+    def test_final_program(exercise_log: ExerciseLog, docker_interface: DockerInterface) -> tuple[int, int] | None:
+        """Tests the last snapshot from an exercise log.
+        This is done by running the student program on a Docker container, accessed through the DockerInterface class.
+
+        Args:
+            exercise_log (ExerciseLog): The exercise log containing a snapshot to be tested.
+
+        Returns:
+            tuple[int, int]: A tuple containing the number of passed tests and the total number of tests ran. TODO: Could this instead be a boolean which is True if all the tests passed? Don't want analysis to be biased by number of tests.
+            If exercise_log doesn't contain any program logs, None is returned.
+        """
+        #Get last program
+        last_program_log: ProgramLog = ExerciseLogProcessor.get_last_program_log(exercise_log)
+        if last_program_log is None:
+            return None
+        last_program_string: str = last_program_log.snapshot
+        #Return the run_tests function for the exercise class name+Test
+        return docker_interface.test_student_program(last_program_string, exercise_log.student_id, exercise_log.exercise_name)
+    
+    @staticmethod
+    def did_final_program_pass_test(exercise_log: ExerciseLog) -> bool:
+        #Call test_final_program and return True if all tests passed
+        return False
