@@ -1,5 +1,23 @@
+from classes.exercise_log import ExerciseLog
+from testing_service.test_report import TestReport
+
+import docker
+from docker.models.containers import Container
+import os.path
+import json
+
 class DockerInterface:
+    """
+    A singleton class responsible for managing the Docker container used to run student programs.
+    The class is a singleton to ensure all tests take place through the one client that manages a single Docker container.
+    """
+
     _instance: 'DockerInterface' = None
+
+    SHARED_FOLDER_PATH: str = "./data/shared"
+
+    def __init__(self):
+        self.client = docker.from_env() #Docker (desktop?) must be running for this line to work
 
     @staticmethod
     def get_instance() -> 'DockerInterface':
@@ -7,20 +25,87 @@ class DockerInterface:
         if DockerInterface._instance is None:
             DockerInterface._instance = DockerInterface()
         return DockerInterface._instance
-
-    def save_student_program_in_image(self, student_program: str, student_id: str, exercise_id: str):
-        pass
-
+    
     def create_docker_container(self):
         """
-        Create docker container which should: create necessary shared directories and copy students' programs for each attempt
+        Create docker container which should:
+        Create necessary shared directories
+        Copy test files into directory
         Disconnect from network (can this be done programmatically?)
         """ 
-        pass
+        (self._image, logs) = self.client.images.build(path="./testing_service")
+        print("Docker image built")
+        shared_folder_absolute_path = str(os.path.abspath(f'{self.SHARED_FOLDER_PATH}/'))
+        volumes = {
+            shared_folder_absolute_path: {
+                "bind": "/shared",
+                "mode": "rw"
+            }
+        }
+        self._container: Container = self.client.containers.run(image=self._image, detach=True, network_disabled=True, volumes=volumes)
+        print("Docker container created")
 
-    def run_tests(self) -> tuple[int, int]:
+    def save_student_program(self, student_program: str, student_id: str, exercise_id: str) -> str:
         """
-        Somehow get all the Docker image to run the appropriate tests on each student program in the programs folder
-        Give some report of each (could be down with a TestReport class?)
+        Return file name it's been saved under in any case?
         """
-        return (0, 0)
+        #TODO: Make this unique
+        program_filepath = f"{self.SHARED_FOLDER_PATH}/student_programs/{exercise_id}_{student_id}.py"
+        if not os.path.exists(program_filepath):
+            with open(program_filepath, "w") as f:
+                f.write(student_program)
+        return program_filepath
+
+    def run_student_program(self, filename: str, exercise_id: str):
+        """
+        Run student program in docker container
+        Args:
+            filename (str): _description_
+        """
+        # The filepath arguments should relate to the file structure as seen inside the Docker container.
+        # Assuming /shared is the mount point inside the container for the host's ./data/shared
+        # and student programs are saved in /shared/student_programs/
+        container_program_path = f"/shared/student_programs/{os.path.basename(filename)}"
+
+        # Check if the student program file exists inside the container
+        self._container.exec_run(
+            cmd=["python3", f"/testing_service/program_tests/{exercise_id}_test.py", container_program_path],
+        )#TODO: Check whether detached is needed (and whether filepath arguments should relate to Docker container or local mount)
+
+    def get_test_report(self, filename: str) -> TestReport:
+        """
+        Get test report from student program that was run in run_student_program (stored in /out folder of shared folder)
+        Args:
+            filename (str): Filename of .out.json file containing test report
+        """
+        #Check there's an existing .out.json file (otherwise raise a FileNotFoundError)
+        #Return contents of the .out.json file
+        try:
+            with open(filename, "r") as f:
+                return TestReport.parse_test_report(json.load(f))
+        except FileNotFoundError:
+            print(f"File {filename} not found.")
+
+    def test_student_program(self, student_program: str, student_id: str, exercise_id: str) -> TestReport:
+        """
+        Tests a student program by through a series of method calls, representing the following steps:
+        - Save the file in the Docker container
+        - Running the corresponding test harness program
+        - Get the output from the test harness
+        The test harnesses run depend on the exercise and can be found in the testing_service/program_test directory.
+        """
+        program_filename: str = self.save_student_program(student_program, student_id, exercise_id)
+        if exercise_id == "adding_to_list":
+            self.run_student_program(program_filename, exercise_id)
+            output_file_name: str = os.path.basename(program_filename).replace(".py", ".out.json")
+            output_file_path: str = os.path.join(self.SHARED_FOLDER_PATH, "test_results", output_file_name)
+            return self.get_test_report(output_file_path)
+    
+    def close_docker_container(self):
+        """
+        Close the docker container
+        """
+        self._container.stop()
+        self._container.remove(force=True)
+        self.client.close()
+        #TODO: Check it works
