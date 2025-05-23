@@ -4,6 +4,7 @@ from classes.stage_log import StageLog
 from classes.processors.stage_log_processor import StageLogProcessor
 from classes.written_response import WrittenResponse
 
+from testing_service.test_report import TestReport
 from testing_service.docker_interface import DockerInterface
 from enums import DebuggingStage
 
@@ -125,7 +126,7 @@ class ExerciseLogProcessor:
         return ExerciseLogProcessor.get_last_stage(exercise_log).stage_name == "modify"
     
     @staticmethod
-    def test_final_program(exercise_log: ExerciseLog, docker_interface: DockerInterface) -> tuple[int, int] | None:
+    def test_final_program(exercise_log: ExerciseLog, docker_interface: DockerInterface) -> TestReport | None:
         """Tests the last snapshot from an exercise log.
         This is done by running the student program on a Docker container, accessed through the DockerInterface class.
 
@@ -133,7 +134,7 @@ class ExerciseLogProcessor:
             exercise_log (ExerciseLog): The exercise log containing a snapshot to be tested.
 
         Returns:
-            tuple[int, int]: A tuple containing the number of passed tests and the total number of tests ran. TODO: Could this instead be a boolean which is True if all the tests passed? Don't want analysis to be biased by number of tests.
+            TestReport: A TestReport object containing the number of passed tests and the total number of tests ran.
             If exercise_log doesn't contain any program logs, None is returned.
         """
         #Get last program
@@ -143,8 +144,3 @@ class ExerciseLogProcessor:
         last_program_string: str = last_program_log.snapshot
         #Return the run_tests function for the exercise class name+Test
         return docker_interface.test_student_program(last_program_string, exercise_log.student_id, exercise_log.exercise_name)
-    
-    @staticmethod
-    def did_final_program_pass_test(exercise_log: ExerciseLog) -> bool:
-        #Call test_final_program and return True if all tests passed
-        return False

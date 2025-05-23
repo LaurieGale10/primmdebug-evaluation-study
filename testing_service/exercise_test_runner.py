@@ -1,7 +1,11 @@
-from testing_service.test_case import TestCase
-
+import json
+import sys
+import os
 import io
 from unittest.mock import patch
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from test_case import TestCase
 
 class ExerciseTestRunner:
     
@@ -16,7 +20,7 @@ class ExerciseTestRunner:
         Returns:
             bool: Whether the test case passed or failed (the output must be exactly correct to pass).
         """
-        with open(f"{program_filename}.py") as program: #Should this have an except or just keep running?
+        with open(program_filename) as program: #Should this have an except or just keep running?
             with patch('builtins.input', side_effect=test_case.inputs), \
                  patch('sys.stdout', new_callable=io.StringIO) as mock_output, \
                  patch('random.choice', side_effect=test_case.random_values) if test_case.random_values is not None else patch('random.choice', side_effect=lambda x: x[0]):
@@ -39,19 +43,36 @@ class ExerciseTestRunner:
             return False
 
     @staticmethod
-    def run_tests(program_filename: str, test_cases: TestCase, debug: bool = False) -> tuple[int, int]:
+    def run_tests(program_filename: str, test_cases: TestCase, debug: bool = False) -> dict[str, int]:
         """Tests the correctness of a student's program (saved to a file) by running a set of test cases.
 
         Args:
             program_filename (str): The filename of the student's program to be tested.
 
         Returns:
-            tuple[int, int]: A tuple containing the number of successful tests and the total number of tests run.
+            dict[str, int]: A dictionary containing the number of successful tests and the total number of tests run. Can be extended to include more data.
         """
-        completed_tests = 0
+        total_tests = 0
         successful_tests = 0
         for test_case in test_cases:
             if ExerciseTestRunner.run_test_case(program_filename, test_case, debug=debug):
                 successful_tests += 1
-            completed_tests += 1
-        return successful_tests, completed_tests
+            total_tests += 1
+        return {
+            "successful_tests": successful_tests,
+            "total_tests": total_tests
+        }
+    
+    @staticmethod
+    def save_test_results(test_results: dict[str, int], filename: str):
+        """Saves the test results to a JSON file.
+
+        Args:
+            test_results (dict[str, int]): The test results to save.
+            filename (str): The filename to save the test results to.
+        """
+        #Define output file path within the Docker container
+        output_file_name: str = os.path.basename(filename).replace(".py", ".out.json")
+        output_file_path: str = os.path.join("/shared/test_results/", output_file_name)
+        with open(output_file_path, "w") as f:
+            json.dump(test_results, f, indent=2)
