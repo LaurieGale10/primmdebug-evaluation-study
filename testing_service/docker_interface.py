@@ -49,11 +49,16 @@ class DockerInterface:
         """
         Return file name it's been saved under in any case?
         """
-        #TODO: Make this unique
-        program_filepath = f"{self.SHARED_FOLDER_PATH}/student_programs/{exercise_id}_{student_id}.py"
-        if not os.path.exists(program_filepath):
-            with open(program_filepath, "w") as f:
-                f.write(student_program)
+        #This logic is needed to allow for multiple versions of the same program (in case a student has attempted the same exercise multiple times)
+        unique_version_number: int = 1 
+        program_filepath: str = f"{self.SHARED_FOLDER_PATH}/student_programs/{exercise_id}_{student_id}_{unique_version_number}.py"
+        file_exists: bool = os.path.exists(program_filepath)
+        while file_exists:
+            unique_version_number += 1
+            program_filepath = f"{self.SHARED_FOLDER_PATH}/student_programs/{exercise_id}_{student_id}_{unique_version_number}.py"
+            file_exists = os.path.exists(program_filepath)
+        with open(program_filepath, "w") as f:
+            f.write(student_program)
         return program_filepath
 
     def run_student_program(self, filename: str, exercise_id: str):
@@ -95,11 +100,10 @@ class DockerInterface:
         The test harnesses run depend on the exercise and can be found in the testing_service/program_test directory.
         """
         program_filename: str = self.save_student_program(student_program, student_id, exercise_id)
-        if exercise_id == "adding_to_list":
-            self.run_student_program(program_filename, exercise_id)
-            output_file_name: str = os.path.basename(program_filename).replace(".py", ".out.json")
-            output_file_path: str = os.path.join(self.SHARED_FOLDER_PATH, "test_results", output_file_name)
-            return self.get_test_report(output_file_path)
+        self.run_student_program(program_filename, exercise_id)
+        output_file_name: str = os.path.basename(program_filename).replace(".py", ".out.json")
+        output_file_path: str = os.path.join(self.SHARED_FOLDER_PATH, "test_results", output_file_name)
+        return self.get_test_report(output_file_path)
     
     def close_docker_container(self):
         """
