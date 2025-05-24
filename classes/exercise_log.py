@@ -3,9 +3,11 @@ import datetime
 from classes.stage_log import StageLog
 from classes.timestamp_parser import TimestampParser
 from enums import DebuggingStage
+from testing_service.test_report import TestReport
 
 class ExerciseLog:
-    def __init__(self, student_id: str, exercise_name: str, stage_logs: list[StageLog], start_time: str, end_time: str, session: int):
+    def __init__(self, id: str, student_id: str, exercise_name: str, stage_logs: list[StageLog], start_time: str, end_time: str, session: int):
+        self._id: str = id
         self._student_id: str = student_id
         self._exercise_name: str = exercise_name
         self._stage_logs: list[StageLog] = ExerciseLog.sort_stage_logs(stage_logs)
@@ -13,6 +15,10 @@ class ExerciseLog:
         self._end_time: datetime = TimestampParser.parse_timestamp_str(end_time)
         self._session: int = session
     
+    @property
+    def id(self) -> str:
+        return self._id
+
     @property
     def student_id(self) -> str:
         return self._student_id
@@ -37,9 +43,18 @@ class ExerciseLog:
     def session(self) -> int:
         return self._session
     
+    @property
+    def test_report(self) -> TestReport | None:
+        return self._test_report if hasattr(self, '_test_report') else None
+    
+    @test_report.setter
+    def test_report(self, value: TestReport):
+        self._test_report = value
+
     @staticmethod
     def parse_exercise_log(raw_exercise_logs: dict, stage_logs: list[StageLog]) -> 'ExerciseLog':
         return ExerciseLog(
+            id = raw_exercise_logs["id"],
             student_id = raw_exercise_logs["studentId"],
             exercise_name = raw_exercise_logs["exerciseId"],
             stage_logs = stage_logs,
