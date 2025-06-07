@@ -13,6 +13,19 @@ from statistics import median
 class ExerciseLogProcessor:
 
     @staticmethod
+    def get_exercise_log_by_id(exercise_log_id: str, exercise_logs: list[ExerciseLog]) -> ExerciseLog | None:
+        """Returns the exercise log with the given ID from a list of exercise logs.
+
+        Args:
+            exercise_log_id (str): The ID of the exercise log to return.
+            exercise_logs (list[ExerciseLog]): The list of exercise logs to search in.
+
+        Returns:
+            ExerciseLog: The exercise log with the given ID, or None if no such log exists.
+        """
+        return next((log for log in exercise_logs if log.id == exercise_log_id), None)
+
+    @staticmethod
     def get_stage_names(exercise_log: ExerciseLog) -> list[str]:
         return [DebuggingStage(stage.stage_name).value for stage in exercise_log.stage_logs]
     
@@ -49,7 +62,7 @@ class ExerciseLogProcessor:
                 return stage_log.program_logs[-1]
         return None
     
-    def get_time_per_stage(exercise_log: ExerciseLog, take_median: bool = False) -> dict[DebuggingStage, float]:
+    def get_time_per_stage(exercise_log: ExerciseLog, take_median: bool = True) -> dict[DebuggingStage, float]:
         """Calculates the total time spent on each PRIMMDebug stage during the challenge attempt.
 
         If a stage has been completed multiples times, the culumative time on that stage is calculated if take_median is False, or the median time otherwise.
