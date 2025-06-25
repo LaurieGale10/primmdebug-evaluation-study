@@ -31,10 +31,11 @@ class AddingToListTest:
     ]
 
     @staticmethod
-    def run_tests(program_filename: str) -> dict[str, int]:
-        return ExerciseTestRunner.run_tests(program_filename, AddingToListTest.test_cases)
+    def run_tests(program_filename: str, normalise_output: bool = False) -> dict[str, int]:
+        return ExerciseTestRunner.run_tests(program_filename, AddingToListTest.test_cases, normalise_output=normalise_output)
 
 if __name__ == "__main__":
     filename: str = sys.argv[1]
-    test_results: dict[str, int] = AddingToListTest.run_tests(filename)
+    normalise_output: bool = bool(sys.argv[2])
+    test_results: dict[str, int] = AddingToListTest.run_tests(filename, normalise_output=normalise_output)
     ExerciseTestRunner.save_test_results(test_results, filename)

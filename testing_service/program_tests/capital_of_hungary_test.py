@@ -26,10 +26,11 @@ class CapitalOfHungaryTest:
     ]
 
     @staticmethod
-    def run_tests(program_filename: str) -> tuple[int, int]:
-        return ExerciseTestRunner.run_tests(program_filename, CapitalOfHungaryTest.test_cases)
-    
+    def run_tests(program_filename: str, normalise_output: bool = False) -> tuple[int, int]:
+        return ExerciseTestRunner.run_tests(program_filename, CapitalOfHungaryTest.test_cases, normalise_output=normalise_output)
+
 if __name__ == "__main__":
     filename: str = sys.argv[1]
-    test_results: dict[str, int] = CapitalOfHungaryTest.run_tests(filename)
+    normalise_output: bool = bool(sys.argv[2])
+    test_results: dict[str, int] = CapitalOfHungaryTest.run_tests(filename, normalise_output=normalise_output)
     ExerciseTestRunner.save_test_results(test_results, filename)

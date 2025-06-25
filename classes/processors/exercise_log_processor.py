@@ -139,7 +139,7 @@ class ExerciseLogProcessor:
         return ExerciseLogProcessor.get_last_stage(exercise_log).stage_name == "modify"
     
     @staticmethod
-    def test_final_program(exercise_log: ExerciseLog, docker_interface: DockerInterface) -> TestReport | None:
+    def test_final_program(exercise_log: ExerciseLog, docker_interface: DockerInterface, normalise_output: bool = False) -> TestReport | None:
         """Tests the last snapshot from an exercise log.
         This is done by running the student program on a Docker container, accessed through the DockerInterface class.
 
@@ -156,4 +156,4 @@ class ExerciseLogProcessor:
             return None
         last_program_string: str = last_program_log.snapshot
         #Return the run_tests function for the exercise class name+Test
-        return docker_interface.test_student_program(last_program_string, exercise_log.student_id, exercise_log.exercise_name)
+        return docker_interface.test_student_program(last_program_string, exercise_log.student_id, exercise_log.exercise_name, normalise_output=normalise_output)

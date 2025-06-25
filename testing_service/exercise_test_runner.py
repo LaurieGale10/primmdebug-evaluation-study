@@ -10,7 +10,7 @@ from test_case import TestCase
 class ExerciseTestRunner:
     
     @staticmethod
-    def run_test_case(program_filename: str, test_case: TestCase, debug: bool = False) -> bool:
+    def run_test_case(program_filename: str, test_case: TestCase, normalise_output: bool = False, debug: bool = False) -> bool:
         """Runs a a single test case on a student's program the test case passed or failed.
 
         Args:
@@ -37,13 +37,16 @@ class ExerciseTestRunner:
                 print(test_case.expected_output)
                 print(mock_output.getvalue())
                 print(mock_output.getvalue() == test_case.expected_output)
-            assert mock_output.getvalue() == test_case.expected_output
+            if normalise_output:
+                assert "".join(mock_output.getvalue().strip().lower().split()) == "".join(test_case.expected_output.strip().lower().split())
+            else:
+                assert mock_output.getvalue() == test_case.expected_output
             return True
         except AssertionError:
             return False
 
     @staticmethod
-    def run_tests(program_filename: str, test_cases: TestCase, debug: bool = False) -> dict[str, int]:
+    def run_tests(program_filename: str, test_cases: TestCase, normalise_output: bool = False, debug: bool = False) -> dict[str, int]:
         """Tests the correctness of a student's program (saved to a file) by running a set of test cases.
 
         Args:
@@ -55,7 +58,7 @@ class ExerciseTestRunner:
         total_tests = 0
         successful_tests = 0
         for test_case in test_cases:
-            if ExerciseTestRunner.run_test_case(program_filename, test_case, debug=debug):
+            if ExerciseTestRunner.run_test_case(program_filename, test_case, normalise_output=normalise_output, debug=debug):
                 successful_tests += 1
             total_tests += 1
         return {

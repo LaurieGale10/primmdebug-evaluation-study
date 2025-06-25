@@ -5,6 +5,7 @@ import docker
 from docker.models.containers import Container
 import os.path
 import json
+import shutil
 
 class DockerInterface:
     """
@@ -61,7 +62,7 @@ class DockerInterface:
             f.write(student_program)
         return program_filepath
 
-    def run_student_program(self, filename: str, exercise_id: str):
+    def run_student_program(self, filename: str, exercise_id: str, normalise_output: bool = False) -> None:
         """
         Run student program in docker container
         Args:
@@ -74,7 +75,7 @@ class DockerInterface:
 
         # Check if the student program file exists inside the container
         self._container.exec_run(
-            cmd=["python3", f"/testing_service/program_tests/{exercise_id}_test.py", container_program_path],
+            cmd=["python3", f"/testing_service/program_tests/{exercise_id}_test.py", container_program_path, str(normalise_output)]
         )#TODO: Check whether detached is needed (and whether filepath arguments should relate to Docker container or local mount)
 
     def get_test_report(self, filename: str) -> TestReport:
@@ -91,7 +92,7 @@ class DockerInterface:
         except FileNotFoundError:
             print(f"File {filename} not found.")
 
-    def test_student_program(self, student_program: str, student_id: str, exercise_id: str) -> TestReport:
+    def test_student_program(self, student_program: str, student_id: str, exercise_id: str, normalise_output: bool = False) -> TestReport:
         """
         Tests a student program by through a series of method calls, representing the following steps:
         - Save the file in the Docker container
@@ -100,7 +101,7 @@ class DockerInterface:
         The test harnesses run depend on the exercise and can be found in the testing_service/program_test directory.
         """
         program_filename: str = self.save_student_program(student_program, student_id, exercise_id)
-        self.run_student_program(program_filename, exercise_id)
+        self.run_student_program(program_filename, exercise_id, normalise_output=normalise_output)
         output_file_name: str = os.path.basename(program_filename).replace(".py", ".out.json")
         output_file_path: str = os.path.join(self.SHARED_FOLDER_PATH, "test_results", output_file_name)
         return self.get_test_report(output_file_path)
@@ -109,7 +110,19 @@ class DockerInterface:
         """
         Close the docker container
         """
+        student_programs_path = os.path.join(self.SHARED_FOLDER_PATH, "student_programs")
+        test_results_path = os.path.join(self.SHARED_FOLDER_PATH, "test_results")
+
+        for folder in [student_programs_path, test_results_path]:
+            for filename in os.listdir(folder):
+                file_path = os.path.join(folder, filename)
+                try:
+                    if os.path.isfile(file_path) or os.path.islink(file_path):
+                        os.unlink(file_path)
+                    elif os.path.isdir(file_path):
+                        shutil.rmtree(file_path)
+                except Exception as e:
+                    print(f"Failed to delete {file_path}. Reason: {e}")
         self._container.stop()
         self._container.remove(force=True)
         self.client.close()
-        #TODO: Check it works
