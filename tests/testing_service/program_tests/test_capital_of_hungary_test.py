@@ -1,21 +1,34 @@
 import unittest
 from testing_service.program_tests.capital_of_hungary_test import CapitalOfHungaryTest
+from testing_service.test_report import TestReport
 
 class TestCapitalOfHungaryTest(unittest.TestCase):
     def test_correct_program(self):
-        self.assertEqual(CapitalOfHungaryTest.run_tests("tests/testing_service/mock_programs/capital_of_hungary/correct"), (4, 4))
+        test_report: TestReport = TestReport.parse_test_report(CapitalOfHungaryTest.run_tests("tests/testing_service/mock_programs/capital_of_hungary/correct.py"))
+        self.assertEqual(test_report.n_successful_tests, 4)
+        self.assertEqual(test_report.n_total_tests, 4)
 
     def test_extended_program(self):
-        self.assertEqual(CapitalOfHungaryTest.run_tests("tests/testing_service/mock_programs/capital_of_hungary/extended"), (4, 4))
+        test_report: TestReport = TestReport.parse_test_report(CapitalOfHungaryTest.run_tests("tests/testing_service/mock_programs/capital_of_hungary/extended.py"))
+        self.assertEqual(test_report.n_successful_tests, 4)
+        self.assertEqual(test_report.n_total_tests, 4)
 
     def test_logically_incorrect_extended_program(self):
-        self.assertEqual(CapitalOfHungaryTest.run_tests("tests/testing_service/mock_programs/capital_of_hungary/logically_incorrect_extended"), (1, 4))
-    
+        test_report: TestReport = TestReport.parse_test_report(CapitalOfHungaryTest.run_tests("tests/testing_service/mock_programs/capital_of_hungary/logically_incorrect_extended.py"))
+        self.assertEqual(test_report.n_successful_tests, 1)
+        self.assertEqual(test_report.n_total_tests, 4)
+
     def test_synactically_incorrect_program(self):
-        self.assertEqual(CapitalOfHungaryTest.run_tests("tests/testing_service/mock_programs/capital_of_hungary/syntactically_incorrect"), (0, 4))
+        test_report: TestReport = TestReport.parse_test_report(CapitalOfHungaryTest.run_tests("tests/testing_service/mock_programs/capital_of_hungary/syntactically_incorrect.py"))
+        self.assertEqual(test_report.n_successful_tests, 0)
+        self.assertEqual(test_report.n_total_tests, 4)
 
     def test_empty_program(self):
-        self.assertEqual(CapitalOfHungaryTest.run_tests("tests/testing_service/mock_programs/capital_of_hungary/empty"), (0, 4))
-
+        test_report: TestReport = TestReport.parse_test_report(CapitalOfHungaryTest.run_tests("tests/testing_service/mock_programs/capital_of_hungary/empty.py"))
+        self.assertEqual(test_report.n_successful_tests, 0)
+        self.assertEqual(test_report.n_total_tests, 4)
+        
     def test_without_if(self):
-        self.assertEqual(CapitalOfHungaryTest.run_tests("tests/testing_service/mock_programs/capital_of_hungary/without_if"), (1, 4))
+        test_report: TestReport = TestReport.parse_test_report(CapitalOfHungaryTest.run_tests("tests/testing_service/mock_programs/capital_of_hungary/without_if.py"))
+        self.assertEqual(test_report.n_successful_tests, 1)
+        self.assertEqual(test_report.n_total_tests, 4)
