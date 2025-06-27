@@ -51,7 +51,7 @@ def is_one_indexed(cluster_labels: list[int]) -> bool:
     return all(label >= 1 for label in cluster_labels)
 
 def get_size_of_clusters(cluster_labels: list[int]) -> dict[int, int]:
-    items_per_cluster = {i + 1: 0 for i in range(4)}
+    items_per_cluster = {i + 1: 0 for i in range(min(cluster_labels), max(cluster_labels) + 1)}
     for label in cluster_labels:
         items_per_cluster[label + 1] += 1
     return items_per_cluster
@@ -136,7 +136,7 @@ def plot_histogram_times_per_stage_of_clusters(exercise_logs_clusters_mapping: D
             marginal="box"
         ).show()
 
-def plot_median_times_per_stage_of_clusters(exercise_logs_clusters_mapping: DataFrame, exercise_logs: list[ExerciseLog], cluster_centroids: DataFrame = None, model_name: str = None):
+def plot_median_times_per_stage_of_clusters(exercise_logs_clusters_mapping: DataFrame, exercise_logs: list[ExerciseLog], model_name: str = None):
     if not is_one_indexed(exercise_logs_clusters_mapping["cluster"].tolist()):
         raise ValueError("The 'cluster' column in exercise_logs_clusters_mapping must be one-indexed.")
     plotting_data = {"cluster": [], "stage": [], "time": []}
@@ -144,13 +144,10 @@ def plot_median_times_per_stage_of_clusters(exercise_logs_clusters_mapping: Data
     for i in range(1, max(exercise_logs_clusters_mapping["cluster"]) + 1):
         exercise_logs_in_cluster = [log for log in exercise_logs if log.id in exercise_logs_clusters_mapping.loc[exercise_logs_clusters_mapping["cluster"] == i, "exercise_log_id"].tolist()]
         for stage in columns:
-            if cluster_centroids is not None and stage.value not in cluster_centroids.columns:
-                plotting_data["time"].append(cluster_centroids[stage.value].iloc[i]) #TODO: Test this is working
-            else:
-                median_time_per_stage: float = median([StageLogProcessor.get_time_on_stage(stage_log) for exercise_log in exercise_logs_in_cluster for stage_log in exercise_log.stage_logs if stage_log.stage_name == stage])
-                plotting_data["cluster"].append(str(i))
-                plotting_data["stage"].append(stage.value)
-                plotting_data["time"].append(median_time_per_stage)
+            median_time_per_stage: float = median([StageLogProcessor.get_time_on_stage(stage_log) for exercise_log in exercise_logs_in_cluster for stage_log in exercise_log.stage_logs if stage_log.stage_name == stage])
+            plotting_data["cluster"].append(str(i))
+            plotting_data["stage"].append(stage.value)
+            plotting_data["time"].append(median_time_per_stage)
     plotting_data_df: DataFrame = DataFrame(plotting_data)
     px.bar(
         plotting_data_df,
@@ -160,6 +157,15 @@ def plot_median_times_per_stage_of_clusters(exercise_logs_clusters_mapping: Data
         barmode="group",
         title="Median time spent on each PRIMMDebug stage per cluster" if model_name is None else f"Median time spent on each PRIMMDebug stage per cluster ({model_name})"
     ).show()
+
+def plot_median_times_per_stage_of_cluster_centroids(cluster_centroids: DataFrame, model_name: str = None):
+    cluster_centroids_long = cluster_centroids.reset_index().melt(
+        id_vars="index",
+        var_name="stage",
+        value_name="time"
+    ).rename(columns={"index": "cluster"})
+    cluster_centroids_long["cluster"] = cluster_centroids_long["cluster"].astype(str)
+    px.bar(cluster_centroids_long, x="stage", y="time", color="cluster", barmode="group", title="Estimated means {model_name}").show()
 
 def plot_histogram_number_of_stages(exercise_logs_clusters_mapping: list[ExerciseLog], exercise_logs: list[ExerciseLog], model_name: str = None):
     if not is_one_indexed(exercise_logs_clusters_mapping["cluster"].tolist()):
@@ -180,10 +186,10 @@ def plot_histogram_number_of_stages(exercise_logs_clusters_mapping: list[Exercis
         marginal="box"
     ).show()
 
-def plot_median_number_of_stages_of_clusters(exercise_logs_clusters_mapping: DataFrame, exercise_logs: list[ExerciseLog], model_name: str = None, cluster_centroids: DataFrame = None):
+def plot_median_number_of_stages_of_clusters(exercise_logs_clusters_mapping: DataFrame, exercise_logs: list[ExerciseLog], model_name: str = None):
     if not is_one_indexed(exercise_logs_clusters_mapping["cluster"].tolist()):
         raise ValueError("The 'cluster' column in exercise_logs_clusters_mapping must be one-indexed.")
-    plotting_data: DataFrame = DataFrame({"cluster": [str(i) for i in range(1, max(exercise_logs_clusters_mapping["cluster"]) + 1)]}) #TODO: Implement cluster centroids
+    plotting_data: DataFrame = DataFrame({"cluster": [str(i) for i in range(1, max(exercise_logs_clusters_mapping["cluster"]) + 1)]})
     median_number_of_stages_per_cluster: list[int] = []
     for i in range(1, max(exercise_logs_clusters_mapping["cluster"]) + 1):
         exercise_logs_in_cluster = [log for log in exercise_logs if log.id in exercise_logs_clusters_mapping.loc[exercise_logs_clusters_mapping["cluster"] == i, "exercise_log_id"].tolist()]
@@ -217,10 +223,13 @@ def plot_correctness_of_clusters(exercise_logs_clusters_mapping: DataFrame, exer
 def plot_cluster_visualisations(exercise_logs_clusters_mapping: DataFrame, exercise_logs: list[ExerciseLog], model_name: str = None, cluster_centroids: DataFrame = None):
     plot_correctness_of_clusters(exercise_logs_clusters_mapping, exercise_logs, model_name=model_name)
     
-    plot_median_number_of_stages_of_clusters(exercise_logs_clusters_mapping, exercise_logs, model_name=model_name, cluster_centroids=cluster_centroids)
+    plot_median_number_of_stages_of_clusters(exercise_logs_clusters_mapping, exercise_logs, model_name=model_name)
     plot_histogram_number_of_stages(exercise_logs_clusters_mapping, exercise_logs, model_name=model_name)
     
-    plot_median_times_per_stage_of_clusters(exercise_logs_clusters_mapping, exercise_logs, model_name=model_name, cluster_centroids=cluster_centroids)
+    if cluster_centroids is not None:
+        plot_median_times_per_stage_of_cluster_centroids(cluster_centroids, model_name=model_name)
+    else:
+        plot_median_times_per_stage_of_clusters(exercise_logs_clusters_mapping, exercise_logs, model_name=model_name, cluster_centroids=cluster_centroids)
     plot_histogram_times_per_stage_of_clusters(exercise_logs_clusters_mapping, exercise_logs, model_name=model_name)
     
     plot_median_times_per_exercise_of_clusters(exercise_logs_clusters_mapping, exercise_logs, model_name=model_name)

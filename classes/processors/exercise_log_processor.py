@@ -86,6 +86,34 @@ class ExerciseLogProcessor:
             else:
                 time_per_stage[stage] = 0
         return time_per_stage
+    
+    @staticmethod
+    def get_first_find_the_error_stage(exercise_log: ExerciseLog) -> StageLog | None:
+        """Returns the first Find the Error stage in the exercise log, or None if no such stage exists.
+
+        Args:
+            exercise_log (ExerciseLog): The exercise log to search in.
+
+        Returns:
+            StageLog: The first Find the Error stage in the exercise log, or None if no such stage exists.
+        """
+        for stage_log in exercise_log.stage_logs:
+            if stage_log.stage_name == DebuggingStage.find_error:
+                return stage_log
+        return None
+    
+    @staticmethod
+    def does_find_the_error_stage_have_correct_response(exercise_log: ExerciseLog) -> bool:
+        """Checks whether the first Find the Error stage in the exercise log has a correct response.
+
+        Args:
+            exercise_log (ExerciseLog): The exercise log to check.
+
+        Returns:
+            bool: True if the first Find the Error stage has a correct response, False otherwise.
+        """
+        first_find_the_error_stage = ExerciseLogProcessor.get_first_find_the_error_stage(exercise_log)
+        return first_find_the_error_stage.correct if first_find_the_error_stage is not None and first_find_the_error_stage.correct is not None else None
 
     @staticmethod
     def is_final_program_erroneous(exercise_log: ExerciseLog) -> bool:
