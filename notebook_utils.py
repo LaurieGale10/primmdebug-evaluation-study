@@ -165,7 +165,7 @@ def plot_median_times_per_stage_of_cluster_centroids(cluster_centroids: DataFram
         value_name="time"
     ).rename(columns={"index": "cluster"})
     cluster_centroids_long["cluster"] = cluster_centroids_long["cluster"].astype(str)
-    px.bar(cluster_centroids_long, x="stage", y="time", color="cluster", barmode="group", title="Estimated means {model_name}").show()
+    px.bar(cluster_centroids_long, x="stage", y="time", color="cluster", barmode="group", title=f"Estimated means {model_name}").show()
 
 def plot_histogram_number_of_stages(exercise_logs_clusters_mapping: list[ExerciseLog], exercise_logs: list[ExerciseLog], model_name: str = None):
     if not is_one_indexed(exercise_logs_clusters_mapping["cluster"].tolist()):
