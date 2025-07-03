@@ -116,6 +116,41 @@ class ExerciseLogProcessor:
         return first_find_the_error_stage.correct if first_find_the_error_stage is not None and first_find_the_error_stage.correct is not None else None
 
     @staticmethod
+    def get_succeeding_stage(exercise_log: ExerciseLog, stage_log: StageLog) -> StageLog | None:
+        """Returns the stage log that succeeds the given stage log in the exercise log.
+
+        Args:
+            exercise_log (ExerciseLog): The exercise log to search in.
+            stage_log (StageLog): The stage log to find the succeeding stage for.
+
+        Returns:
+            StageLog: The succeeding stage log, or None if no such stage exists.
+        """
+        succeeding_stage_index = exercise_log.stage_logs.index(stage_log) + 1
+        if succeeding_stage_index < len(exercise_log.stage_logs):
+            return exercise_log.stage_logs[succeeding_stage_index]
+        return None
+    
+    @staticmethod
+    def add_correctness_to_test_stages(exercise_log: ExerciseLog) -> ExerciseLog:
+        """Due to not logging correctness of test stages in the past, this function adds correctness to all test stages in the exercise log if there is sufficient data to infer it.
+
+        Args:
+            exercise_log (ExerciseLog): The exercise log to add correctness to.
+
+        Returns:
+            ExerciseLog: The exercise log with correctness added to all test stages.
+        """
+        test_logs: list[StageLog] = [stage for stage in exercise_log.stage_logs if stage.stage_name == DebuggingStage.test]
+        for log in test_logs:
+            succeeding_stage: StageLog | None = ExerciseLogProcessor.get_succeeding_stage(exercise_log, log)
+            if succeeding_stage is not None and succeeding_stage.stage_name in [DebuggingStage.inspect_code, DebuggingStage.fix_error]:
+                log.correct = False
+            elif succeeding_stage is not None and succeeding_stage.stage_name == DebuggingStage.modify:
+                log.correct = True
+        return exercise_log
+
+    @staticmethod
     def is_final_program_erroneous(exercise_log: ExerciseLog) -> bool:
         last_program_log = ExerciseLogProcessor.get_last_program_log(exercise_log)
         return last_program_log.compiled if last_program_log is not None else None

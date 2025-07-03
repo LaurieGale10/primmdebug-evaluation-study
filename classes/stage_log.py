@@ -68,6 +68,10 @@ class StageLog:
     @property
     def correct(self) -> bool:
         return self._correct
+    
+    @correct.setter
+    def correct(self, correct: bool):
+        self._correct = correct
 
     @property
     def focus_events(self) -> list[WindowFocusEvent]:
