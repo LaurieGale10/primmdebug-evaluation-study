@@ -149,6 +149,25 @@ class ExerciseLogProcessor:
             elif succeeding_stage is not None and succeeding_stage.stage_name == DebuggingStage.modify:
                 log.correct = True
         return exercise_log
+    
+    @staticmethod
+    def get_most_recent_snapshot_at_stage(exercise_log: ExerciseLog, stage_log: StageLog) -> ProgramLog | None:
+        """Given a stage log that is contained within an exercise log, returns the most recent snapshot that occured either in or before that stage log.
+
+        Args:
+            exercise_log (ExerciseLog): The exercise log to search in.
+            stage_log (StageLog): The stage log to find the most recent snapshot for.
+
+        Returns:
+            ProgramLog: The most recent snapshot at the given stage log, or None if no such snapshot exists.
+        """
+        if len(exercise_log.stage_logs) < 1 or stage_log not in exercise_log.stage_logs:
+            return None
+        program_logs_up_to_stage: list[ProgramLog] = []
+        for i in range(1, stage_log.overall_stage_number + 1):
+            if exercise_log.stage_logs[i].program_logs is not None:
+                program_logs_up_to_stage.extend(exercise_log.stage_logs[i].program_logs)
+        return program_logs_up_to_stage[-1] if len(program_logs_up_to_stage) > 0 else None
 
     @staticmethod
     def is_final_program_erroneous(exercise_log: ExerciseLog) -> bool:
