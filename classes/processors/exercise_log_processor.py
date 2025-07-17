@@ -1,3 +1,4 @@
+from classes.exercise_classes.exercise import Exercise
 from classes.program_log import ProgramLog
 from classes.exercise_log import ExerciseLog
 from classes.stage_log import StageLog
@@ -239,3 +240,21 @@ class ExerciseLogProcessor:
         last_program_string: str = last_program_log.snapshot
         #Return the run_tests function for the exercise class name+Test
         return docker_interface.test_student_program(last_program_string, exercise_log.student_id, exercise_log.exercise_name, normalise_output=normalise_output)
+    
+    @staticmethod
+    def get_written_response_data(exercise_log: ExerciseLog, exercises: list[Exercise]) -> list[WrittenResponse]:
+        responses: list[WrittenResponse] = []
+        exercise: Exercise = None
+        if exercises:
+            exercise = [exercise for exercise in exercises if exercise.name == exercise_log.exercise_name][0]
+        for stage_log in exercise_log.stage_logs:
+            if stage_log.stage_name in [DebuggingStage.predict, DebuggingStage.spot_defect, DebuggingStage.inspect_code, DebuggingStage.fix_error]:
+                response_data: WrittenResponse = WrittenResponse(
+                    exercise_name = exercise_log.exercise_name,
+                    exercise_description = exercise.description if exercise else None,
+                    debugging_stage = stage_log.stage_name,
+                    end_time = stage_log.end_time,
+                    response = stage_log.response
+                )
+                responses.append(response_data)
+        return responses
