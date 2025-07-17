@@ -26,8 +26,10 @@ def parse_stage_logs(raw_logs: list[dict]) -> list[StageLog]:
         parsed_stage_logs.append(StageLog.parse_stage_log(log))
     return parsed_stage_logs
 
-def parse_student_ids(raw_logs: list[dict]) -> list[StudentId]:
+def parse_student_ids(raw_logs: list[dict], exercise_logs: list[ExerciseLog]) -> list[StudentId]:
     parsed_student_ids = []
     for log in raw_logs:
-        parsed_student_ids.append(StudentId.parse_student_id(log))
+        #Only parse student IDs for students who have attempted at least one exercise
+        if any(exercise_log.student_id == log["id"] for exercise_log in exercise_logs):
+            parsed_student_ids.append(StudentId.parse_student_id(log))
     return parsed_student_ids
