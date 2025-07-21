@@ -34,7 +34,7 @@ class DockerInterface:
         Copy test files into directory
         Disconnect from network (can this be done programmatically?)
         """ 
-        (self._image, logs) = self.client.images.build(path="./testing_service")
+        (self._image, logs) = self.client.images.build(path="./analysis/log_data_analysis/testing_service")
         print("Docker image built")
         shared_folder_absolute_path = str(os.path.abspath(f'{self.SHARED_FOLDER_PATH}/'))
         volumes = {
