@@ -1,7 +1,7 @@
 import datetime
 
-from classes.io_event import IOEvent
-from classes.timestamp_parser import TimestampParser
+from analysis.log_data_analysis.classes.io_event import IOEvent
+from analysis.log_data_analysis.classes.timestamp_parser import TimestampParser
 
 class ProgramLog:
     def __init__(self, snapshot: str, timestamp: str, compiled: bool, io_events: list[IOEvent]):

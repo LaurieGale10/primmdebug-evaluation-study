@@ -1,9 +1,9 @@
 import datetime
 
-from classes.stage_log import StageLog
-from classes.timestamp_parser import TimestampParser
-from enums import DebuggingStage
-from testing_service.test_report import TestReport
+from analysis.log_data_analysis.classes.stage_log import StageLog
+from analysis.log_data_analysis.classes.timestamp_parser import TimestampParser
+from analysis.log_data_analysis.enums import DebuggingStage
+from analysis.log_data_analysis.testing_service.test_report import TestReport
 
 class ExerciseLog:
     def __init__(self, id: str, student_id: str, exercise_name: str, stage_logs: list[StageLog], start_time: str, end_time: str, session: int):

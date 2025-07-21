@@ -1,7 +1,7 @@
-from classes.ExerciseLog import ExerciseLog
-from classes.StageLog import StageLog
-from classes.StudentId import StudentId
-from enums import DebuggingStage
+from analysis.log_data_analysis.classes.exercise_log import ExerciseLog
+from analysis.log_data_analysis.classes.stage_log import StageLog
+from analysis.log_data_analysis.classes.student_id import StudentId
+from analysis.log_data_analysis.enums import DebuggingStage
 
 class FilterService:
 

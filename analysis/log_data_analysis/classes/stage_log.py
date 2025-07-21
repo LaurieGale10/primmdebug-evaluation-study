@@ -1,11 +1,11 @@
 import datetime
 
-from classes.hint_pane_log import HintPaneLog
-from classes.program_log import ProgramLog
-from classes.test_case_log import TestCaseLog
-from classes.window_focus_event import WindowFocusEvent
-from classes.timestamp_parser import TimestampParser
-from enums import DebuggingStage
+from analysis.log_data_analysis.classes.hint_pane_log import HintPaneLog
+from analysis.log_data_analysis.classes.program_log import ProgramLog
+from analysis.log_data_analysis.classes.test_case_log import TestCaseLog
+from analysis.log_data_analysis.classes.window_focus_event import WindowFocusEvent
+from analysis.log_data_analysis.classes.timestamp_parser import TimestampParser
+from analysis.log_data_analysis.enums import DebuggingStage
 
 class StageLog:
     def __init__(self, id: str, stage_string: str, start_time: str = None, end_time: str = None, time: str = None, program_logs: list[ProgramLog] = None, response: str = None, correct: bool = None, focus_events: list[WindowFocusEvent] = None, test_case_logs: TestCaseLog = None, hint_pane_logs: HintPaneLog = None):

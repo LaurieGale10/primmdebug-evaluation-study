@@ -1,9 +1,9 @@
-from classes.exercise_log import ExerciseLog
-from classes.stage_log import StageLog
-from classes.window_focus_event import WindowFocusEvent
-from classes.timestamp_parser import TimestampParser
-from enums import DebuggingStage, FocusType
-from loading_services.fetch_logs_from_file import fetch_data_from_json
+from analysis.log_data_analysis.classes.exercise_log import ExerciseLog
+from analysis.log_data_analysis.classes.stage_log import StageLog
+from analysis.log_data_analysis.classes.window_focus_event import WindowFocusEvent
+from analysis.log_data_analysis.classes.timestamp_parser import TimestampParser
+from analysis.log_data_analysis.enums import DebuggingStage, FocusType
+from analysis.log_data_analysis.loading_services.fetch_logs_from_file import fetch_data_from_json
 
 def add_session_data(raw_exercise_logs: list[dict], raw_student_ids: list[dict]) -> list[dict]:
     """

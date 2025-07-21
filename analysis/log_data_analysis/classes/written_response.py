@@ -1,6 +1,6 @@
 import datetime
 
-from enums import DebuggingStage
+from analysis.log_data_analysis.enums import DebuggingStage
 
 class WrittenResponse:
 

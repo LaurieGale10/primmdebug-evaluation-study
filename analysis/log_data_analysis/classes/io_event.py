@@ -1,7 +1,7 @@
 import datetime
 
-from classes.timestamp_parser import TimestampParser
-from enums import IOType
+from analysis.log_data_analysis.classes.timestamp_parser import TimestampParser
+from analysis.log_data_analysis.enums import IOType
 
 class IOEvent:
     def __init__(self, text: str, type: IOType, time: str):

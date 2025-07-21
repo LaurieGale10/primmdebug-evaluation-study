@@ -1,8 +1,8 @@
-from classes.stage_log import StageLog
-from classes.exercise_classes.exercise import Exercise
-from classes.processors.program_log_processor import ProgramLogProcessor
+from analysis.log_data_analysis.classes.stage_log import StageLog
+from analysis.log_data_analysis.classes.exercise_classes.exercise import Exercise
+from analysis.log_data_analysis.classes.processors.program_log_processor import ProgramLogProcessor
 
-from enums import DebuggingStage
+from analysis.log_data_analysis.enums import DebuggingStage
 
 class StageLogProcessor:
     

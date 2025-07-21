@@ -1,5 +1,5 @@
-from classes.program_log import ProgramLog
-from enums import IOType
+from analysis.log_data_analysis.classes.program_log import ProgramLog
+from analysis.log_data_analysis.enums import IOType
 
 class ProgramLogProcessor:
     

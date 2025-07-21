@@ -1,5 +1,5 @@
-from classes.exercise_log import ExerciseLog
-from testing_service.test_report import TestReport
+from analysis.log_data_analysis.classes.exercise_log import ExerciseLog
+from analysis.log_data_analysis.testing_service.test_report import TestReport
 
 import docker
 from docker.models.containers import Container

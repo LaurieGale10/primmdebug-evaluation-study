@@ -1,13 +1,13 @@
-from classes.exercise_classes.exercise import Exercise
-from classes.program_log import ProgramLog
-from classes.exercise_log import ExerciseLog
-from classes.stage_log import StageLog
-from classes.processors.stage_log_processor import StageLogProcessor
-from classes.written_response import WrittenResponse
+from analysis.log_data_analysis.classes.exercise_classes.exercise import Exercise
+from analysis.log_data_analysis.classes.program_log import ProgramLog
+from analysis.log_data_analysis.classes.exercise_log import ExerciseLog
+from analysis.log_data_analysis.classes.stage_log import StageLog
+from analysis.log_data_analysis.classes.processors.stage_log_processor import StageLogProcessor
+from analysis.log_data_analysis.classes.written_response import WrittenResponse
 
-from testing_service.test_report import TestReport
-from testing_service.docker_interface import DockerInterface
-from enums import DebuggingStage
+from analysis.log_data_analysis.testing_service.test_report import TestReport
+from analysis.log_data_analysis.testing_service.docker_interface import DockerInterface
+from analysis.log_data_analysis.enums import DebuggingStage
 
 from statistics import median
 

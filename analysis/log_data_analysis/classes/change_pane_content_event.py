@@ -1,6 +1,6 @@
 import datetime
 
-from classes.timestamp_parser import TimestampParser
+from analysis.log_data_analysis.classes.timestamp_parser import TimestampParser
 
 class ChangePaneContentEvent:
     def __init__(self, new_content: str, time: str):

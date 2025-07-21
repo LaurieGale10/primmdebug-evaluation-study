@@ -1,6 +1,6 @@
 import datetime
 
-from classes.timestamp_parser import TimestampParser
+from analysis.log_data_analysis.classes.timestamp_parser import TimestampParser
 
 class StudentId:
     def __init__(self, id: str, school: str, date_first_accessed: str = None):

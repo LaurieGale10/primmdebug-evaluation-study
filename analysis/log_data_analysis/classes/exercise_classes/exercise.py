@@ -1,5 +1,5 @@
-from classes.exercise_classes.test_case import TestCase
-from enums import DebuggingStage
+from analysis.log_data_analysis.classes.exercise_classes.test_case import TestCase
+from analysis.log_data_analysis.enums import DebuggingStage
 
 class Exercise:
     def __init__(self, id: str, description: str, difficulty: str, program: str, line_containing_error: str = None, hints: dict[DebuggingStage, list[str]] = None, test_cases: list[TestCase] = None):

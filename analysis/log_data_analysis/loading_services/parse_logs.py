@@ -1,9 +1,9 @@
-from classes.exercise_log import ExerciseLog
-from classes.stage_log import StageLog
-from classes.student_id import StudentId
-from classes.exercise_classes.exercise import Exercise
-from loading_services.clean_logs import *
-from enums import DebuggingStage
+from analysis.log_data_analysis.classes.exercise_log import ExerciseLog
+from analysis.log_data_analysis.classes.stage_log import StageLog
+from analysis.log_data_analysis.classes.student_id import StudentId
+from analysis.log_data_analysis.classes.exercise_classes.exercise import Exercise
+from analysis.log_data_analysis.loading_services.clean_logs import *
+from analysis.log_data_analysis.enums import DebuggingStage
 
 def parse_exercises(raw_data: list[dict]) -> list[Exercise]:
     parsed_exercises = []

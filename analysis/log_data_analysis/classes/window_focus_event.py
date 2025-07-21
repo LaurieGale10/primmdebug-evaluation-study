@@ -1,7 +1,7 @@
 import datetime
 
-from classes.timestamp_parser import TimestampParser
-from enums import FocusType
+from analysis.log_data_analysis.classes.timestamp_parser import TimestampParser
+from analysis.log_data_analysis.enums import FocusType
 
 class WindowFocusEvent:
     def __init__(self, focus: FocusType, time: str):

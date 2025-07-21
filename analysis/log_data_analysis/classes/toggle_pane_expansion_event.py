@@ -1,7 +1,7 @@
 import datetime
 
-from classes.timestamp_parser import TimestampParser
-from enums import PaneView
+from analysis.log_data_analysis.classes.timestamp_parser import TimestampParser
+from analysis.log_data_analysis.enums import PaneView
 
 class TogglePaneExpansionEvent:
     def __init__(self, new_pane_view: PaneView, time: str):
